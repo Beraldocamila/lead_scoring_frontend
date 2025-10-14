@@ -1,23 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
+import './index.css';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen bg-indigo-900 flex flex-col items-center justify-center p-8">
+
+      <div className="bg-white p-10 rounded-xl shadow-2xl text-center">
+
+        <h1 className="text-4xl font-extrabold text-indigo-700 mb-4">
+          Sistema de Lead Scoring
+        </h1>
+
+      </div>
     </div>
   );
 }
