@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.clientes-container {
+  padding: 30px 30px 30px 30px; 
+  font-family: 'Poppins', sans-serif;
+  color: #4b2de7;
+}
+
+.clientes-header {
+  display: flex;
+  
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.titulo-principal {
+  position: absolute; 
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.logo {
+  background: #e9e3ff;
+  font-size: 32px; 
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.clientes-busqueda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.buscador input {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 15px;
+  width: 200px;
+}
+
+.buscador button {
+  margin-left: 10px;
+  background: #4b2de7;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+.clientes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.cliente-card {
+  background: #f4f1ff;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.add-btn {
+  background: #4b2de7;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+}
+
+
+.menu-flotante {
+  position: absolute;
+  top: 60px; 
+  right: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  width: 180px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.menu-flotante ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.menu-flotante li {
+  padding: 8px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.menu-flotante li:hover {
+  background-color: #f0f0f0;
+}
+
+.perfil {
+  cursor: pointer;
+  position: relative;
+  color: #4b2de7;
+}
+
+.perfil .emoji {
+  font-size: 40px; 
+}
