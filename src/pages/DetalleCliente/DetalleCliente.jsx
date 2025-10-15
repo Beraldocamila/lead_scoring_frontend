@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import mockClientes from '../../data/mockClientes.json';
-
+import React, { useState } from 'react';
+import mockClientes from '../../data/mockClientes.json'; 
+import './detalleCliente.css';
 
 // Esto cambia. se conecta con el Back
 const getClientData = (dni) => {
@@ -10,202 +10,196 @@ const getClientData = (dni) => {
 
 const DetalleCliente = ({ dni: propDni }) => {
 
-    const client = getClientData(propDni);
+    const client = getClientData(propDni); 
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     // Score
     const score = client.score_actual;
-    let scoreColorClass;
-    let scoreBgClass;
-    let scoreBorderColor;
+    let scoreTextColor; 
+    let scoreBgColor;    
+    let scoreBorderColor; 
     const progress = `${score}%`;
 
+    // Asignacion de variables CSS para el SCORE
     if (score >= 71) {
-        // ALTO
-        scoreColorClass = 'text-scoring-verde';
-        scoreBgClass = 'bg-scoring-verde';
-        scoreBorderColor = 'border-scoring-verde';
+        scoreTextColor = 'var(--score-verde)';
+        scoreBgColor = 'var(--score-verde)';
+        scoreBorderColor = 'var(--score-verde)'; 
     } else if (score >= 41) {
-        // MEDIO
-        scoreColorClass = 'text-scoring-naranja';
-        scoreBgClass = 'bg-scoring-naranja';
-        scoreBorderColor = 'border-scoring-naranja';
+        scoreTextColor = 'var(--score-naranja)';
+        scoreBgColor = 'var(--score-naranja)';
+        scoreBorderColor = 'var(--score-naranja)'; 
     } else {
-        // BAJO
-        scoreColorClass = 'text-scoring-rojo';
-        scoreBgClass = 'bg-scoring-rojo';
-        scoreBorderColor = 'border-scoring-rojo';
+        scoreTextColor = 'var(--score-rojo)';
+        scoreBgColor = 'var(--score-rojo)';
+        scoreBorderColor = 'var(--score-rojo)'; 
     }
 
-    const sectionTitleColor = 'text-primary';
-    const cardBorderColor = 'border-primary';
+    const primaryColor = 'var(--primary-blue)'; 
 
     return (
-        <div className="min-h-screen bg-app-fondo text-texto-claro font-sans">
-
-            {/* Contenedor principal*/}
-            <div className="max-w-7xl mx-auto p-6 bg-app-fondo">
+        <div className="page-container"> 
+            
+            {/* Contenedor principal de la pagina */}
+            <div className="main-content">
 
                 {/* Header */}
-                <div className="flex justify-between items-center pb-4 mb-6 border-b border-gray-200">
-                    <div className="flex items-center">
-                        <img
-                            src="/img/icono_user.png"
+                <div className="header-section">
+                    <div className="header-title-group">
+                        {/* Icono Usuario */}
+                        <img 
+                            src="/img/icono_user.png" 
                             alt="Ícono de Usuario"
-                            className="w-12 h-12 mr-4 text-primary"
+                            className="header-user-icon"
                         />
-                        <h1 className={`text-5xl font-bold ${sectionTitleColor}`}>
+                        <h1 className="header-page-title">
                             {client.nombre}
                         </h1>
                     </div>
-
+                    
                     {/* Menu */}
-                    <div className="relative">
-                        <button
+                    <div className="container-menu">
+                        <button 
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                            className="text-primary hover:text-primary focus:outline-none transition duration-150 flex items-center"
+                            className="header-user-menu-button"
                         >
-                            <img
-                                src="/img/user.png"
-                                alt="Menú de Usuario"
-                                className="w-8 h-8"
+                            {/* Icono perfil*/}
+                            <img 
+                                className='container-menu-img'
+                                src="/img/user.png" 
+                                alt="Menu de Usuario"
+
                             />
-                            <span className="ml-2 text-2xl">
-                                {isUserMenuOpen ? '▼' : '▲'}
+                            <span>
+                                {isUserMenuOpen ? '▲' : '▼'}
                             </span>
                         </button>
                         {isUserMenuOpen && (
-
-                            <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-10 text-texto-claro">
-
-                                {/*Perfil*/}
-                                <div className="flex items-center p-3 border-b border-gray-200">
-                                    {/* Icono de Perfil */}
-                                    <img src="/img/icono_user.png" alt="Perfil" className="w-10 h-10 mr-3 text-primary" />
-                                    <span className="font-semibold text-sm text-texto-claro">User123</span>
+                            <div className="dropdown-menu">
+                                
+                                {/*Encabezado menu user*/}
+                                <div className="dropdown-item-header">
+                                    <img src="/img/icono_user.png" alt="Perfil"/>
+                                    <span>User</span>
                                 </div>
 
-                                {/* Clientes*/}
-                                <a href="#" className="flex items-center px-4 py-3 hover:bg-indigo-50 transition duration-150">
-                                    {/* Icono Clientes */}
-                                    <img src="/img/icono_personas.png" alt="Clientes" className="w-6 h-6 mr-3 text-primary" />
-                                    <span className="font-medium text-xs">CLIENTES</span>
+                                {/* item: CLIENTES */}
+                                <a href="#" className="dropdown-item">
+                                    <img src="/img/icono_personas.png" alt="Clientes" />
+                                    CLIENTES
                                 </a>
 
-                                {/* Correos */}
-                                <a href="#" className="flex items-center px-4 py-3 hover:bg-indigo-50 transition duration-150">
-                                    {/* Icono Correos */}
-                                    <img src="/img/icono_mail.png" alt="Correos Enviados" className="w-6 h-6 mr-3 text-primary" />
-                                    <span className="font-medium text-xs">CORREOS ENVIADOS</span>
+                                {/* item: CORREOS ENVIADOS */}
+                                <a href="#" className="dropdown-item">
+                                    <img src="./img/icono_mail.png" alt="Correos Enviados" />
+                                    CORREOS ENVIADOS
                                 </a>
 
-                                {/* Editar Productos */}
-                                <a href="#" className="flex items-center px-4 py-3 hover:bg-indigo-50 transition duration-150">
-                                    {/* Icono Editar Productos */}
-                                    <img src="/img/icono_editar.png" alt="Editar Productos" className="w-6 h-6 mr-3 text-primary" />
-                                    <span className="font-medium text-xs">EDITAR PRODUCTOS</span>
+                                {/* item: EDITAR PRODUCTOS */}
+                                <a href="#" className="dropdown-item">
+                                    <img src="/img/icono_editar.png" alt="Editar Productos" />
+                                    EDITAR PRODUCTOS
                                 </a>
 
                                 {/* Separador */}
-                                <div className="border-t border-gray-200 my-1"></div>
+                                <div style={{ borderTop: '1px solid #e5e7eb', margin: '0.25rem 0' }}></div>
 
-                                {/* Cerrar Sesion */}
-                                <a href="#" className="flex items-center px-4 py-3 hover:bg-red-50 transition duration-150">
-                                    {/* Icono Cerrar Sesión */}
-                                    <img src="/img/icono_cerrar_sesion.png" alt="Cerrar Sesión" className="w-6 h-6 mr-3 text-primary" />
-                                    <span className="font-medium text-xs text-texto-claro">CERRAR SESION</span>
+                                {/* item: CERRAR SESION */}
+                                <a href="#" className="dropdown-item">
+                                    <img src="/img/icono_cerrar_sesion.png" alt="Cerrar Sesion" />
+                                    CERRAR SESION
                                 </a>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Body - 2 columnas*/}
-                <div className="flex space-x-8 mt-6">
+                {/* BODY */}
+                <div className="column-layout">
+                    
+                    {/* Detalle Cliente*/}
+                    <div className="col-izquierda">
 
-                    {/* Columna Izquierda - Detalle del Cliente */}
-                    <div className="w-2/3 space-y-6">
-
-                        {/* Info Personal */}
-                        <div className={`bg-white p-6 rounded-xl shadow-lg border border-gray-100 ${cardBorderColor}`}>
-                            <h3 className={`text-xl font-semibold border-b border-gray-200 pb-2 mb-4 ${sectionTitleColor}`}>
+                        {/* INFORMACIÓN PERSONAL */}
+                        <div className="info-card">
+                            <h3 className="info-card-title">
                                 INFORMACIÓN PERSONAL
                             </h3>
-                            <div className="text-texto-claro grid grid-cols-2 gap-y-3">
-                                <p><strong className="font-bold">DNI:</strong> {client.dni}</p>
-                                <p><strong className="font-bold">Edad:</strong> {client.edad} años</p>
-                                <p className="col-span-2"><strong className="font-bold">Mail:</strong> {client.mail}</p>
+                            <div className="info-card-content">
+                                <p className="info-item-half"><strong>DNI:</strong> {client.dni}</p>
+                                <p className="info-item-half"><strong >Edad:</strong> {client.edad} años</p>
+                                <p className="info-item-full"><strong>Mail:</strong> {client.mail}</p>
                             </div>
                         </div>
 
-                        {/* Estado de Seguros */}
-                        <div className={`bg-white p-6 rounded-xl shadow-lg border border-gray-100 ${cardBorderColor}`}>
-                            <h3 className={`text-xl font-semibold border-b border-gray-200 pb-2 mb-4 ${sectionTitleColor}`}>
+                        {/* ESTADO DE SEGUROS */}
+                        <div className="info-card">
+                            <h3 className="info-card-title">
                                 ESTADO DE SEGUROS
                             </h3>
-                            <div className="text-texto-claro space-y-3">
-                                <p><strong className="font-bold">Pólizas activas:</strong> {client.polizas_activas}</p>
-                                <p><strong className="font-bold">Pagos:</strong> {client.pagos}</p>
-                                <p><strong className="font-bold">Siniestros:</strong> {client.siniestros}</p>
+                            <div className="info-card-content info-flex-stack">
+                                <p><strong>Pólizas activas:</strong> {client.polizas_activas}</p>
+                                <p><strong>Pagos:</strong> {client.pagos}</p>
+                                <p><strong>Siniestros:</strong> {client.siniestros}</p>
                             </div>
                         </div>
 
-                        {/* Interacciones */}
-                        <div className={`bg-white p-6 rounded-xl shadow-lg border border-gray-100 ${cardBorderColor}`}>
-                            <h3 className={`text-xl font-semibold border-b border-gray-200 pb-2 mb-4 ${sectionTitleColor}`}>
+                        {/* INTERACCIONES */}
+                        <div className="info-card">
+                            <h3 className="info-card-title">
                                 INTERACCIONES
                             </h3>
-                            <div className="text-texto-claro">
-                                <p className="font-medium">{client.interacciones}</p>
+                            <div className="info-card-content">
+                                <p>{client.interacciones}</p>
                             </div>
                         </div>
 
                     </div>
 
+                    {/* SCORE */}
+                    <div className="col-derecha">
 
-
-                    {/* Columna Derecha - Score*/}
-                    <div className="w-1/3 space-y-6">
-
-                        <div
-                            className={`bg-white p-6 rounded-xl shadow-lg border ${scoreBorderColor} text-center`}
+                        {/* Tarjeta SCORE ACTUAL */}
+                        <div 
+                            className="score-card"
+                            style={{ borderColor: scoreBorderColor }} 
                         >
-
-                            <h3 className={`text-2xl font-bold mb-6 ${scoreColorClass}`}>
+                            
+                            <h3 className="score-title" style={{ color: scoreTextColor }}>
                                 Score Actual
                             </h3>
 
-                            {/* Barra de Progreso */}
-                            <div className="w-full bg-gray-200 rounded-full h-3.5 mb-6 overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-500 ${scoreBgClass}`}
-                                    style={{ width: progress }}
+                            {/* Barra */}
+                            <div className="score-bar-container">
+                                <div 
+                                    className="score-bar-fill"
+                                    style={{ width: progress, backgroundColor: scoreBgColor }}
                                 ></div>
                             </div>
-
+                            
                             {/* Puntaje y Rango */}
-                            <p className={`text-4xl font-bold text-center mb-6 ${scoreColorClass}`}>{client.score_actual}/100</p>
-
-                            <p className={`text-xl font-bold ${scoreColorClass}`}>
+                            <p className="score-value" style={{ color: scoreTextColor }}>{client.score_actual}/100</p>
+                            
+                            <p className="score-rango" style={{ color: scoreTextColor }}>
                                 {client.rango_score}
                             </p>
-
+                            
                             {/* Mensaje Apto/No Apto */}
-                            <p className={`text-2xl font-bold mt-3 ${scoreColorClass}`}>
+                            <p className="score-message" style={{ color: scoreTextColor }}>
                                 {client.estado_cross_selling}
                             </p>
 
                         </div>
-                        {/* Botón de Correo (condicional) */}
-                        {client.estado_cross_selling === 'Apto para Cross-Selling' && (
-                            <button
-                                onClick={() => console.log('Visualizar Correo')}
-                                className={`mt-6 px-6 py-3 text-white font-bold rounded-3xl shadow-md transition duration-300 bg-scoring-verde hover:opacity-90 block mx-auto w-2/3 max-w-[250px]`}
-                            >
-                                Visualizar Correo
-                            </button>
-                        )}
-
+                            {/* Boton de Correo */}
+                            {client.estado_cross_selling === 'Apto para Cross-Selling' && (
+                                <button 
+                                    onClick={() => console.log('Visualizar Correo')}
+                                    className="email-button"
+                                    style={{ backgroundColor: scoreBgColor }}
+                                >
+                                    Visualizar Correo
+                                </button>
+                            )}
                     </div>
                 </div>
             </div>
