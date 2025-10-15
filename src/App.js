@@ -1,19 +1,19 @@
 import './App.css';
 import './index.css';
-
+import React from 'react';
+import DetalleCliente from './pages/DetalleCliente/DetalleCliente.jsx'; 
 
 function App() {
+
+  // '12345678' = Juan Gomez (ALTO score - Verde)
+  // '87654321' = María Lopez (BAJO score - Rojo)
+  // '23456789' = Carlos Pérez (MEDIO score - Naranja)
+  const prueba_Dni = '12345678'; 
+
   return (
-    <div className="min-h-screen bg-indigo-900 flex flex-col items-center justify-center p-8">
-
-      <div className="bg-white p-10 rounded-xl shadow-2xl text-center">
-
-        <h1 className="text-4xl font-extrabold text-indigo-700 mb-4">
-          Sistema de Lead Scoring
-        </h1>
-
-      </div>
-    </div>
+    <DetalleCliente 
+        dni={prueba_Dni} 
+      />
   );
 }
 
