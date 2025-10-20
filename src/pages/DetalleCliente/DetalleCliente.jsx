@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
+import { useParams } from "react-router-dom";
 import mockClientes from '../../data/mockClientes.json'; 
 import './detalleCliente.css';
 
 // Esto cambia. se conecta con el Back
 const getClientData = (dni) => {
-    return mockClientes.find(client => client.dni === dni);
+    return mockClientes.find((client) => String(client.dni) === String(dni));
 };
 
 
 const DetalleCliente = ({ dni: propDni }) => {
 
-    const client = getClientData(propDni); 
+    const { dni } = useParams();
+    const client = getClientData(propDni || dni);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+    
+        if (!client) {
+        return <p>No se encontró el cliente con DNI {dni}</p>;
+        }
 
     // Score
     const score = client.score_actual;
