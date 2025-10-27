@@ -1,70 +1,80 @@
-# Getting Started with Create React App
+Proyecto: Interfaz de Usuario (UI) del Lead Scoring System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Propósito
 
-## Available Scripts
+Este proyecto corresponde a la **interfaz de usuario (Front-End)** del sistema de **Scoring y Cross-Selling con IA para Compañías de Seguros**.
 
-In the project directory, you can run:
+La aplicación permite al equipo comercial:
 
-### `npm start`
+- Visualizar el **puntaje (Scoring 1–100)** de los clientes según su historial.  
+- Obtener **recomendaciones automáticas de productos (Cross-Selling)** basadas en el puntaje.  
+- **Editar y enviar correos personalizados** con las recomendaciones generadas.  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tecnologías utilizadas
 
-### `npm test`
+- **ReactJS** — v19.1.1  
+- **CSS** — para el diseño visual de la interfaz  
+- **React Router DOM** — para la gestión de rutas  
+- **React Icons** — para el uso de íconos en la interfaz  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Instalación y ejecución
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Requisitos previos
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Para ejecutar el proyecto necesitás tener instalado: 
+- **Node.js**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### 1. Clonar el repositorio
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Descargá el proyecto con el siguiente comando: **git clone https://github.com/Beraldocamila/lead_scoring_frontend.git**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2. Instalar dependencias
+Ingresá a la carpeta del proyecto y ejecutá: **npm install**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3. Ejecutar la aplicación
+Iniciá el entorno de desarrollo con: **npm start**
 
-## Learn More
+Luego abrí tu navegador y entrá a: **http://localhost:3000**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Estructura de pantallas
 
-### Code Splitting
+### Login
+Pantalla de acceso que gestiona la autenticación mediante JWT.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Búsqueda de clientes
+Permite buscar clientes por documento o nombre.
+Incluye filtros por pólizas y opciones para ordenar por Nombre o DNI.
 
-### Analyzing the Bundle Size
+Muestra:
+Listado de clientes con opción de ver el detalle de cada uno.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Detalle del cliente
+Pantalla información personal, estado de Seguro, interacciones, puntaje de Scoring y aptitud para Cross-Selling.
 
-### Making a Progressive Web App
+### Borrador de correo
+Pantalla que muestra el correo de recomendación generado automáticamente.
+El usuario puede:
+- Editar el contenido.
+- Ver la vista previa.
+- Enviar o cancelar el envío del correo.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Reportes de correos enviados
+Lista de correos enviados con información como:
+- Destinatario
+- Producto recomendado
+- Fecha de envío
 
-### Advanced Configuration
+Incluye filtros por cliente, producto o fecha, y opción de exportar a PDF o Excel.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Back-End y base de datos
+Este repositorio contiene solo el Front-End.
+El sistema se integra con un Back-End desarrollado en Python y una base de datos MySQL, según los requerimientos técnicos del proyecto.
