@@ -75,6 +75,8 @@ Lista de correos enviados con información como:
 
 Incluye filtros por cliente, producto o fecha, y opción de exportar a PDF o Excel.
 
+---
+
 ### Back-End y base de datos
 Este repositorio contiene solo el Front-End.
 El sistema se integra con un Back-End desarrollado en Python y una base de datos MySQL, según los requerimientos técnicos del proyecto.
