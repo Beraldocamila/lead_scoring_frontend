@@ -142,7 +142,7 @@
 .clientes-tabla th:nth-child(4),
 .clientes-tabla td:nth-child(4) {
   width: 5%; /* Acciones */
-  text-align: right;
+  text-align: center;
 }
 
 .accion-boton {

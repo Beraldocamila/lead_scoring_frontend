@@ -7,10 +7,21 @@
         "score_actual": 92,
         "rango_score": "ALTO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Hogar (2022 - vigente), Auto (2019 - vigente), Vida (2024 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "5 mails, 5 aperturas, 3 cotizaciones"
+        "ocupacion": "Administrativo",
+        "estado_civil": "Soltero",
+        "antiguedad_meses": 60,
+        "suma_asegurada": 12345678,
+        "costo_mensual": 147258369,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 1,
+        "poliza_auto": 1,
+        "poliza_vida": 1,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "15 de Septiembre 2024" },
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Vida", "fecha": "01 de Octubre 2024" }
+        ]
     },
     {
         "dni": "87654321",
@@ -20,10 +31,20 @@
         "score_actual": 35,
         "rango_score": "BAJO",
         "estado_cross_selling": "No Apto para Cross-Selling",
-        "polizas_activas": "Auto (2020 - vigente)",
-        "pagos": "2 cuotas impagas",
-        "siniestros": "3 siniestros en los últimos 12 meses",
-        "interacciones": "3 mails, 1 apertura, 0 cotizaciones"
+        "ocupacion": "Diseñadora",
+        "estado_civil": "Casada",
+        "antiguedad_meses": 48,
+        "suma_asegurada": 8500000,
+        "costo_mensual": 350000,
+        "cuotas_impagas": 2,
+        "siniestros": 3,
+        "poliza_hogar": 0,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "20 de Febrero 2024" }
+        ]
     },
     {
         "dni": "23456789",
@@ -33,10 +54,20 @@
         "score_actual": 68,
         "rango_score": "MEDIO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Vida (2015 - vigente)",
-        "pagos": "1 cuota impaga",
-        "siniestros": "1 siniestro en los últimos 24 meses",
-        "interacciones": "5 mails, 2 aperturas, 1 cotización"
+        "ocupacion": "Jubilado",
+        "estado_civil": "Viudo",
+        "antiguedad_meses": 120,
+        "suma_asegurada": 500000,
+        "costo_mensual": 80000,
+        "cuotas_impagas": 1,
+        "siniestros": 1,
+        "poliza_hogar": 0,
+        "poliza_auto": 0,
+        "poliza_vida": 1,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "10 de Marzo 2024" }
+        ]
     },
     {
         "dni": "34567890",
@@ -46,10 +77,20 @@
         "score_actual": 88,
         "rango_score": "ALTO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Hogar (2023 - vigente), Auto (2023 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "4 mails, 4 aperturas, 1 cotización"
+        "ocupacion": "Estudiante",
+        "estado_civil": "Soltera",
+        "antiguedad_meses": 15,
+        "suma_asegurada": 6500000,
+        "costo_mensual": 210000,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 1,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Salud", "fecha": "1 de Julio 2024" }
+        ]
     },
     {
         "dni": "45678901",
@@ -59,10 +100,20 @@
         "score_actual": 15,
         "rango_score": "BAJO",
         "estado_cross_selling": "No Apto para Cross-Selling",
-        "polizas_activas": "Salud (2010 - vigente)",
-        "pagos": "3 cuotas impagas",
-        "siniestros": "2 siniestros en los últimos 6 meses",
-        "interacciones": "0 mails, 0 aperturas, 0 cotizaciones"
+        "ocupacion": "Contador",
+        "estado_civil": "Divorciado",
+        "antiguedad_meses": 150,
+        "suma_asegurada": 150000,
+        "costo_mensual": 12000,
+        "cuotas_impagas": 3,
+        "siniestros": 2,
+        "poliza_hogar": 0,
+        "poliza_auto": 0,
+        "poliza_vida": 0,
+        "poliza_salud": 1,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Vida", "fecha": "10 de Agosto 2024" }
+        ]
     },
     {
         "dni": "56789012",
@@ -72,10 +123,20 @@
         "score_actual": 55,
         "rango_score": "MEDIO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Auto (2024 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "3 mails, 3 aperturas, 0 cotizaciones"
+        "ocupacion": "Ingeniera",
+        "estado_civil": "Soltera",
+        "antiguedad_meses": 9,
+        "suma_asegurada": 4000000,
+        "costo_mensual": 150000,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 0,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "22 de Junio 2024" }
+        ]
     },
     {
         "dni": "67890123",
@@ -85,10 +146,22 @@
         "score_actual": 75,
         "rango_score": "ALTO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Vida (2018 - vigente), Hogar (2021 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "1 siniestro en los últimos 36 meses",
-        "interacciones": "6 mails, 5 aperturas, 2 cotizaciones"
+        "ocupacion": "Gerente",
+        "estado_civil": "Casado",
+        "antiguedad_meses": 80,
+        "suma_asegurada": 25000000,
+        "costo_mensual": 5000000,
+        "cuotas_impagas": 0,
+        "siniestros": 1,
+        "poliza_hogar": 1,
+        "poliza_auto": 0,
+        "poliza_vida": 1,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Salud", "fecha": "10 de Noviembre 2023" },
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "11 de Noviembre 2023" },
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "12 de Noviembre 2023" }
+        ]
     },
     {
         "dni": "78901234",
@@ -98,10 +171,20 @@
         "score_actual": 42,
         "rango_score": "MEDIO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Ninguna",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "1 mail, 1 apertura, 1 cotización"
+        "ocupacion": "Vendedora",
+        "estado_civil": "Soltera",
+        "antiguedad_meses": 12,
+        "suma_asegurada": 0,
+        "costo_mensual": 0,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 0,
+        "poliza_auto": 0,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "05 de Octubre 2024" }
+        ]
     },
     {
         "dni": "89012345",
@@ -111,10 +194,20 @@
         "score_actual": 39,
         "rango_score": "BAJO",
         "estado_cross_selling": "No Apto para Cross-Selling",
-        "polizas_activas": "Vida (2005 - vigente)",
-        "pagos": "4 cuotas impagas",
-        "siniestros": "0 siniestros",
-        "interacciones": "2 mails, 0 aperturas, 0 cotizaciones"
+        "ocupacion": "Jubilado",
+        "estado_civil": "Viudo",
+        "antiguedad_meses": 200,
+        "suma_asegurada": 50000,
+        "costo_mensual": 5000,
+        "cuotas_impagas": 4,
+        "siniestros": 0,
+        "poliza_hogar": 0,
+        "poliza_auto": 0,
+        "poliza_vida": 1,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Vida", "fecha": "25 de Agosto 2024" }
+        ]
     },
     {
         "dni": "90123456",
@@ -124,23 +217,44 @@
         "score_actual": 80,
         "rango_score": "ALTO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Auto (2018 - vigente), Salud (2021 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "1 siniestro en los últimos 48 meses",
-        "interacciones": "7 mails, 6 aperturas, 3 cotizaciones"
+        "ocupacion": "Médica",
+        "estado_civil": "Casada",
+        "antiguedad_meses": 84,
+        "suma_asegurada": 15000000,
+        "costo_mensual": 450000,
+        "cuotas_impagas": 0,
+        "siniestros": 1,
+        "poliza_hogar": 0,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 1,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "01 de Septiembre 2024" },
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "05 de Septiembre 2024" }
+        ]
     },
     {
-        "dni": "01234567",
+        "dni": "1234567",
         "nombre": "Martín Sosa",
         "edad": 22,
         "mail": "martinsosa@mail.com",
         "score_actual": 60,
         "rango_score": "MEDIO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Auto (2024 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "3 mails, 3 aperturas, 0 cotizaciones"
+        "ocupacion": "Empleado",
+        "estado_civil": "Soltero",
+        "antiguedad_meses": 3,
+        "suma_asegurada": 2000000,
+        "costo_mensual": 80000,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 0,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "10 de Noviembre 2024" }
+        ]
     },
     {
         "dni": "11223344",
@@ -150,10 +264,20 @@
         "score_actual": 30,
         "rango_score": "BAJO",
         "estado_cross_selling": "No Apto para Cross-Selling",
-        "polizas_activas": "Hogar (2015 - vencida), Auto (2022 - vencida)",
-        "pagos": "1 cuota impaga",
-        "siniestros": "1 siniestro en los últimos 72 meses",
-        "interacciones": "1 mail, 0 aperturas, 0 cotizaciones"
+        "ocupacion": "Maestra",
+        "estado_civil": "Casada",
+        "antiguedad_meses": 100,
+        "suma_asegurada": 100000,
+        "costo_mensual": 7000,
+        "cuotas_impagas": 1,
+        "siniestros": 1,
+        "poliza_hogar": 1,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "01 de Octubre 2024" }
+        ]
     },
     {
         "dni": "22334455",
@@ -163,10 +287,21 @@
         "score_actual": 78,
         "rango_score": "ALTO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Vida (2012 - vigente), Salud (2018 - vigente), Hogar (2020 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "8 mails, 7 aperturas, 4 cotizaciones"
+        "ocupacion": "Abogado",
+        "estado_civil": "Casado",
+        "antiguedad_meses": 150,
+        "suma_asegurada": 30000000,
+        "costo_mensual": 1200000,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 1,
+        "poliza_auto": 0,
+        "poliza_vida": 1,
+        "poliza_salud": 1,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "15 de Diciembre 2023" },
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Salud", "fecha": "20 de Diciembre 2023" }
+        ]
     },
     {
         "dni": "33445566",
@@ -176,10 +311,20 @@
         "score_actual": 62,
         "rango_score": "MEDIO",
         "estado_cross_selling": "Apto para Cross-Selling",
-        "polizas_activas": "Salud (2023 - vigente)",
-        "pagos": "Al día",
-        "siniestros": "0 siniestros",
-        "interacciones": "4 mails, 2 aperturas, 1 cotización"
+        "ocupacion": "Arquitecta",
+        "estado_civil": "Soltera",
+        "antiguedad_meses": 24,
+        "suma_asegurada": 5500000,
+        "costo_mensual": 180000,
+        "cuotas_impagas": 0,
+        "siniestros": 0,
+        "poliza_hogar": 0,
+        "poliza_auto": 0,
+        "poliza_vida": 0,
+        "poliza_salud": 1,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Hogar", "fecha": "05 de Agosto 2024" }
+        ]
     },
     {
         "dni": "44556677",
@@ -189,9 +334,19 @@
         "score_actual": 25,
         "rango_score": "BAJO",
         "estado_cross_selling": "No Apto para Cross-Selling",
-        "polizas_activas": "Auto (2021 - cancelada)",
-        "pagos": "5 cuotas impagas",
-        "siniestros": "1 siniestro en los últimos 36 meses",
-        "interacciones": "2 mails, 0 aperturas, 0 cotizaciones"
+        "ocupacion": "Mecánico",
+        "estado_civil": "Divorciado",
+        "antiguedad_meses": 40,
+        "suma_asegurada": 1500000,
+        "costo_mensual": 50000,
+        "cuotas_impagas": 5,
+        "siniestros": 1,
+        "poliza_hogar": 0,
+        "poliza_auto": 1,
+        "poliza_vida": 0,
+        "poliza_salud": 0,
+        "interacciones": [
+            { "tipo": "Mail Enviado", "descripcion": "Propuesta Seguro de Auto", "fecha": "01 de Noviembre 2023" }
+        ]
     }
 ]
