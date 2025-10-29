@@ -2,8 +2,19 @@ import "./Clientes.css";
 import clientesData from "../../data/mockClientes.json";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 
 
+// Mapeo de Pólizas
+const polizas_map = {
+  Auto: 'poliza_auto',
+  Hogar: 'poliza_hogar',
+  Vida: 'poliza_vida',
+  Salud: 'poliza_salud',
+};
+
+// Array de nombres de polizas para la tabla
+const polizas_nombres = ['Auto', 'Hogar', 'Vida', 'Salud'];
 
 const Clientes = () => {
   const [filtro, setFiltro] = useState("");
@@ -15,11 +26,12 @@ const Clientes = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
 
+
   // Filtrado por nombre, DNI y poliza
   let clientesFiltrados = clientesData.filter(c =>
     (c.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
       c.dni.includes(filtro)) &&
-    (filtroPoliza === "" || (c.polizas_activas || []).includes(filtroPoliza))
+    (filtroPoliza === "" || (c[polizas_map[filtroPoliza]] === 1))
   );
 
   // Orden
@@ -34,71 +46,81 @@ const Clientes = () => {
   const indicePrimero = indiceUltimo - clientesPorPagina;
   const clientesMostrados = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
-  
+
+  // Función auxiliar para obtener las pólizas activas para la tabla
+  const getPolizasActivas = (cliente) => {
+    const activas = polizas_nombres.filter(nombre => {
+      const key = polizas_map[nombre];
+      // Verifica si la propiedad del cliente es 1
+      return cliente[key] === 1;
+    });
+    return activas.join(", ") || " - ";
+  };
+
 
   return (
     <div className="clientes-container">
       {/* HEADER */}
-    <header className="clientes-header">
-  <div className="logo-section">
-    <div className="logo-icon">
-      <span className="material-symbols-outlined">shield</span>
-    </div>
-    <h1 className="logo-text">LeadScoring</h1>
-  </div>
-
-  <h2 className="page-title">CLIENTES</h2>
-
-<div className="profile-section">
-
-  <div className="container-menu">
-    <button 
-        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-        className="header-user-menu-button"
-    >
-        <img 
-            className='container-menu-img'
-            src="/img/user.png" 
-            alt="Menú de Usuario"
-        />
-        <span>
-            {isUserMenuOpen ? '▲' : '▼'}
-        </span>
-    </button>
-
-    {isUserMenuOpen && (
-        <div className="dropdown-menu">
-            <div className="dropdown-item-header">
-                <img src="/img/icono_user.png" alt="Perfil"/>
-                <span>Usuario</span>
-            </div>
-
-            <a href="#" className="dropdown-item">
-                <img src="/img/icono_personas.png" alt="Clientes" />
-                CLIENTES
-            </a>
-
-            <a href="#" className="dropdown-item">
-                <img src="./img/icono_mail.png" alt="Correos Enviados" />
-                CORREOS ENVIADOS
-            </a>
-
-            <a href="#" className="dropdown-item">
-                <img src="/img/icono_editar.png" alt="Editar Productos" />
-                EDITAR PRODUCTOS
-            </a>
-
-            <div className="dropdown-separator"></div>
-
-            <a href="#" className="dropdown-item">
-                <img src="/img/icono_cerrar_sesion.png" alt="Cerrar Sesión" />
-                CERRAR SESIÓN
-            </a>
+      <header className="clientes-header">
+        <div className="logo-section">
+          <div className="logo-icon">
+            <span className="material-symbols-outlined">shield</span>
+          </div>
+          <h1 className="logo-text">LeadScoring</h1>
         </div>
-    )}
-  </div>
-</div>
-</header>
+
+        <h2 className="page-title">CLIENTES</h2>
+
+        <div className="profile-section">
+
+          <div className="container-menu">
+            <button
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="header-user-menu-button"
+            >
+              <img
+                className='container-menu-img'
+                src="/img/user.png"
+                alt="Menú de Usuario"
+              />
+              <span>
+                {isUserMenuOpen ? '▲' : '▼'}
+              </span>
+            </button>
+
+            {isUserMenuOpen && (
+              <div className="dropdown-menu">
+                <div className="dropdown-item-header">
+                  <img src="/img/icono_user.png" alt="Perfil" />
+                  <span>Usuario</span>
+                </div>
+
+                <a href="#" className="dropdown-item">
+                  <img src="/img/icono_personas.png" alt="Clientes" />
+                  CLIENTES
+                </a>
+
+                <a href="#" className="dropdown-item">
+                  <img src="./img/icono_mail.png" alt="Correos Enviados" />
+                  CORREOS ENVIADOS
+                </a>
+
+                <a href="#" className="dropdown-item">
+                  <img src="/img/icono_editar.png" alt="Editar Productos" />
+                  EDITAR PRODUCTOS
+                </a>
+
+                <div className="dropdown-separator"></div>
+
+                <a href="#" className="dropdown-item">
+                  <img src="/img/icono_cerrar_sesion.png" alt="Cerrar Sesión" />
+                  CERRAR SESIÓN
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
 
 
       {/* MAIN CONTENT */}
@@ -156,16 +178,14 @@ const Clientes = () => {
                   <td>{c.nombre}</td>
                   <td>{c.dni}</td>
                   <td>
-                    {Array.isArray(c.polizas_activas)
-                      ? c.polizas_activas.join(", ")
-                      : c.polizas_activas || ""}
+                    {getPolizasActivas(c)}
                   </td>
                   <td>
                     <button className="accion-boton"
-                     onClick={() => navigate(`/DetalleCliente/${c.dni}`)}
+                      onClick={() => navigate(`/DetalleCliente/${c.dni}`)}
                     >
 
-                      <span className="material-symbols-outlined">visibility</span>
+                      <AiOutlinePlusCircle className="material-symbols-outlined"/>
                     </button>
                   </td>
                 </tr>
