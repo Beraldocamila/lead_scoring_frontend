@@ -154,7 +154,7 @@ const CorreosEnviados = () => {
                   <td>
                     <button
                       className="accion-boton"
-                      onClick={() => navigate(`/DetalleCorreo/${c.id}`)}
+                      onClick={() => navigate(`/DetalleCorreo/${c.id}`)} //aca cambiarrr cuando este la pantalla de borrador de mails
                     >
                       <span className="material-symbols-outlined">
                         visibility
