@@ -182,7 +182,7 @@ const Clientes = () => {
                   </td>
                   <td>
                     <button className="accion-boton"
-                      onClick={() => navigate(`/DetalleCliente/${c.dni}`)}
+                      onClick={() => navigate(`/DetalleCliente/${c.dni}`)} //aca cambiarrr cuando este la patanlla de borrador de mails
                     >
 
                       <AiOutlinePlusCircle className="material-symbols-outlined"/>
