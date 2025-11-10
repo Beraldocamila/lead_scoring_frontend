@@ -1,62 +1,65 @@
 import "./Clientes.css";
-import clientesData from "../../data/mockClientes.json";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AiOutlinePlusCircle } from 'react-icons/ai';
-
-
-// Mapeo de Pólizas
-const polizas_map = {
-  Auto: 'poliza_auto',
-  Hogar: 'poliza_hogar',
-  Vida: 'poliza_vida',
-  Salud: 'poliza_salud',
-};
-
-// Array de nombres de polizas para la tabla
-const polizas_nombres = ['Auto', 'Hogar', 'Vida', 'Salud'];
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import api from "../../services/api"; // 👈 conexión con el backend
 
 const Clientes = () => {
+  const [clients, setClients] = useState([]); // clientes desde el backend
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filtro, setFiltro] = useState("");
   const [orden, setOrden] = useState("Nombre");
-  const [filtroPoliza, setFiltroPoliza] = useState("");
+  const [filtroProducto, setFiltroProducto] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const clientesPorPagina = 10;
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
+  // ✅ Trae los clientes del backend (ya incluye productos)
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await api.get("/clientes");
+        setClients(response.data);
+      } catch (err) {
+        console.error("Error al obtener clientes:", err);
+        setError("No se pudieron cargar los clientes.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClients();
+  }, []);
 
+  if (loading) return <p>Cargando clientes...</p>;
+  if (error) return <p>{error}</p>;
 
-  // Filtrado por nombre, DNI y poliza
-  let clientesFiltrados = clientesData.filter(c =>
-    (c.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-      c.dni.includes(filtro)) &&
-    (filtroPoliza === "" || (c[polizas_map[filtroPoliza]] === 1))
+  // 🔍 Obtener productos únicos para el filtro dinámico
+  const uniqueProducts = Array.from(
+    new Set(clients.flatMap((c) => c.productos || []))
   );
 
-  // Orden
+  // 🔎 Filtrado por nombre, DNI y producto
+  let clientesFiltrados = clients.filter(
+    (c) =>
+      (c.nombre?.toLowerCase().includes(filtro.toLowerCase()) ||
+        c.dni?.includes(filtro)) &&
+      (filtroProducto === "" || c.productos?.includes(filtroProducto))
+  );
+
+  // 🔢 Ordenamiento
   if (orden === "Nombre") {
     clientesFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
   } else if (orden === "DNI") {
     clientesFiltrados.sort((a, b) => a.dni.localeCompare(b.dni));
   }
 
-  // Paginación
+  // 📄 Paginación
   const indiceUltimo = paginaActual * clientesPorPagina;
   const indicePrimero = indiceUltimo - clientesPorPagina;
   const clientesMostrados = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
-
-  // Función auxiliar para obtener las pólizas activas para la tabla
-  const getPolizasActivas = (cliente) => {
-    const activas = polizas_nombres.filter(nombre => {
-      const key = polizas_map[nombre];
-      // Verifica si la propiedad del cliente es 1
-      return cliente[key] === 1;
-    });
-    return activas.join(", ") || " - ";
-  };
-
 
   return (
     <div className="clientes-container">
@@ -72,20 +75,17 @@ const Clientes = () => {
         <h2 className="page-title">CLIENTES</h2>
 
         <div className="profile-section">
-
           <div className="container-menu">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
               className="header-user-menu-button"
             >
               <img
-                className='container-menu-img'
+                className="container-menu-img"
                 src="/img/user.png"
                 alt="Menú de Usuario"
               />
-              <span>
-                {isUserMenuOpen ? '▲' : '▼'}
-              </span>
+              <span>{isUserMenuOpen ? "▲" : "▼"}</span>
             </button>
 
             {isUserMenuOpen && (
@@ -101,7 +101,7 @@ const Clientes = () => {
                 </a>
 
                 <a href="#" className="dropdown-item">
-                  <img src="./img/icono_mail.png" alt="Correos Enviados" />
+                  <img src="/img/icono_mail.png" alt="Correos Enviados" />
                   CORREOS ENVIADOS
                 </a>
 
@@ -122,16 +122,16 @@ const Clientes = () => {
         </div>
       </header>
 
-
       {/* MAIN CONTENT */}
       <main className="clientes-main">
+        {/* FILTROS */}
         <div className="filtros">
           <input
             type="text"
             className="busqueda"
             placeholder="Buscar por DNI o nombre..."
             value={filtro}
-            onChange={e => {
+            onChange={(e) => {
               setFiltro(e.target.value);
               setPaginaActual(1);
             }}
@@ -140,7 +140,7 @@ const Clientes = () => {
           <select
             className="ordenar"
             value={orden}
-            onChange={e => setOrden(e.target.value)}
+            onChange={(e) => setOrden(e.target.value)}
           >
             <option value="Nombre">Ordenar por: Nombre</option>
             <option value="DNI">Ordenar por: DNI</option>
@@ -148,16 +148,18 @@ const Clientes = () => {
 
           <select
             className="filtrar"
-            value={filtroPoliza}
-            onChange={e => {
-              setFiltroPoliza(e.target.value);
+            value={filtroProducto}
+            onChange={(e) => {
+              setFiltroProducto(e.target.value);
               setPaginaActual(1);
             }}
           >
-            <option value="">--Filtrar por: Póliza</option>
-            <option value="Auto">Auto</option>
-            <option value="Hogar">Hogar</option>
-            <option value="Vida">Vida</option>
+            <option value="">--Filtrar por: Producto</option>
+            {uniqueProducts.map((p, i) => (
+              <option key={i} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -168,7 +170,7 @@ const Clientes = () => {
               <tr>
                 <th>Nombre</th>
                 <th>DNI</th>
-                <th>Pólizas</th>
+                <th>Productos</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -177,15 +179,13 @@ const Clientes = () => {
                 <tr key={index}>
                   <td>{c.nombre}</td>
                   <td>{c.dni}</td>
+                  <td>{c.productos?.join(", ") || "-"}</td>
                   <td>
-                    {getPolizasActivas(c)}
-                  </td>
-                  <td>
-                    <button className="accion-boton"
+                    <button
+                      className="accion-boton"
                       onClick={() => navigate(`/DetalleCliente/${c.dni}`)}
                     >
-
-                      <AiOutlinePlusCircle className="material-symbols-outlined"/>
+                      <AiOutlinePlusCircle className="material-symbols-outlined" />
                     </button>
                   </td>
                 </tr>
@@ -203,7 +203,7 @@ const Clientes = () => {
           </p>
           <div className="paginacion-botones">
             <button
-              onClick={() => setPaginaActual(prev => Math.max(prev - 1, 1))}
+              onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
               disabled={paginaActual === 1}
             >
               {"<"}
@@ -219,7 +219,7 @@ const Clientes = () => {
             ))}
             <button
               onClick={() =>
-                setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
+                setPaginaActual((prev) => Math.min(prev + 1, totalPaginas))
               }
               disabled={paginaActual === totalPaginas}
             >
