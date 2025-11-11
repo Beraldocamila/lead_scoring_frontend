@@ -46,6 +46,9 @@ const Clientes = () => {
   const indicePrimero = indiceUltimo - clientesPorPagina;
   const clientesMostrados = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
+ 
+ 
+
 
   // Función auxiliar para obtener las pólizas activas para la tabla
   const getPolizasActivas = (cliente) => {
@@ -64,7 +67,7 @@ const Clientes = () => {
       <header className="clientes-header">
         <div className="logo-section">
           <div className="logo-icon">
-            <span className="material-symbols-outlined">shield</span>
+            <span className="material-symbols-outlined">Logo</span>
           </div>
           <h1 className="logo-text">LeadScoring</h1>
         </div>
@@ -95,12 +98,12 @@ const Clientes = () => {
                   <span>Usuario</span>
                 </div>
 
-                <a href="#" className="dropdown-item">
+                <a href="/" className="dropdown-item">
                   <img src="/img/icono_personas.png" alt="Clientes" />
                   CLIENTES
                 </a>
 
-                <a href="#" className="dropdown-item">
+                <a href="/correos-enviados" className="dropdown-item">
                   <img src="./img/icono_mail.png" alt="Correos Enviados" />
                   CORREOS ENVIADOS
                 </a>
@@ -182,7 +185,7 @@ const Clientes = () => {
                   </td>
                   <td>
                     <button className="accion-boton"
-                      onClick={() => navigate(`/DetalleCliente/${c.dni}`)}
+                      onClick={() => navigate(`/DetalleCliente/${c.dni}`)} 
                     >
 
                       <AiOutlinePlusCircle className="material-symbols-outlined"/>
@@ -194,39 +197,47 @@ const Clientes = () => {
           </table>
         </div>
 
-        {/* PAGINACIÓN */}
-        <div className="paginacion">
-          <p>
-            Mostrando {indicePrimero + 1}-
-            {Math.min(indiceUltimo, clientesFiltrados.length)} de{" "}
-            {clientesFiltrados.length} resultados
-          </p>
-          <div className="paginacion-botones">
+    {/* PAGINACIÓN */}
+    <div className="paginacion">
+      <p>
+        Mostrando {indicePrimero + 1}-
+        {Math.min(indiceUltimo, clientesFiltrados.length)} de{" "}
+        {clientesFiltrados.length} resultados
+      </p>
+
+      <div className="paginacion-botones">
+        <button
+          onClick={() => setPaginaActual(prev => Math.max(prev - 1, 1))}
+          disabled={paginaActual === 1}
+        >
+          {"<"}
+        </button>
+
+        {Array.from({ length: Math.min(10, totalPaginas) }, (_, i) => {
+          const pageNumber = i + 1 + Math.floor((paginaActual - 1) / 10) * 10;
+          if (pageNumber > totalPaginas) return null;
+          return (
             <button
-              onClick={() => setPaginaActual(prev => Math.max(prev - 1, 1))}
-              disabled={paginaActual === 1}
+              key={pageNumber}
+              onClick={() => setPaginaActual(pageNumber)}
+              className={pageNumber === paginaActual ? "activo" : ""}
             >
-              {"<"}
+              {pageNumber}
             </button>
-            {Array.from({ length: totalPaginas }, (_, i) => (
-              <button
-                key={i}
-                className={paginaActual === i + 1 ? "activo" : ""}
-                onClick={() => setPaginaActual(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() =>
-                setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
-              }
-              disabled={paginaActual === totalPaginas}
-            >
-              {">"}
-            </button>
-          </div>
-        </div>
+          );
+        })}
+
+        <button
+          onClick={() =>
+            setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
+          }
+          disabled={paginaActual === totalPaginas}
+        >
+          {">"}
+        </button>
+      </div>
+    </div>
+
       </main>
     </div>
   );
