@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import mockClientes from '../../data/mockClientes.json';
 import './detalleCliente.css';
+import ModalCorreo from '../../components/ModalCorreo'
 
-// Importamos íconos de todas las librerías necesarias
+// Importamos íconos
 import { FaRegHeart, FaRegUser, FaRegCheckCircle, FaRegEnvelope, FaArrowLeft } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
 
+// URL base de la API
+// const API_URL =
 
 // Función para buscar el cliente por DNI
 const getClientData = (dni) => {
@@ -34,18 +37,44 @@ const ProfileItem = ({ icon: Icon, title, value }) => (
 const DetalleCliente = () => {
 
     const { dni } = useParams();
-    const client = getClientData(dni);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const [client, setClient] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [showMailModal, setShowMailModal] = useState(false); // Estado del modal
+    const [interacciones, setInteracciones] = useState([]); // Estado para interacciones
 
     // Función para formatear números a formato local (ej: 12.345.678)
     const formatNumber = (num) => (num || 0).toLocaleString('es-AR');
+
+    useEffect(() => {
+        const clientData = getClientData(dni);
+        setClient(clientData);
+        setInteracciones(clientData ? clientData.interacciones || [] : []);
+        setLoading(false);
+    }, [dni]);
+
+    // FUNCIÓN PARA MANEJAR EL ENVÍO EXITOSO
+    const handleSendSuccess = (mailBody) => {
+        const newInteraction = {
+            tipo: "Mail Enviado",
+            descripcion: mailBody.substring(0, 50) + '...',
+            fecha: new Date().toLocaleDateString('es-AR'),
+        };
+        // Agrega la nueva interacción al estado (simulando un POST exitoso al backend)
+        setInteracciones(prev => [newInteraction, ...prev]);
+    }
+
+    if (loading) {
+        return <p>Cargando datos del cliente...</p>;
+    }
+
 
     if (!client) {
         return <p>No se encontró el cliente con DNI {dni}</p>;
     }
 
-    // --- Lógica de Score ---
+    // Lógica de Score
     const score = client.score_actual;
     let scoreTextColor;
     let scoreBgColor;
@@ -201,7 +230,7 @@ const DetalleCliente = () => {
                         <div className="info-card interacciones-card">
                             <h3 className="info-card-title">INTERACCIONES</h3>
 
-                            {(client.interacciones || []).map((interaccion, index) => (
+                            {(interacciones || []).map((interaccion, index) => (
                                 <div key={index} className="interaccion-item">
                                     <FaRegEnvelope className="interaccion-icon" />
                                     <div className="interaccion-text">
@@ -253,15 +282,15 @@ const DetalleCliente = () => {
                             </p>
 
                         </div>
-
-                        {/* Boton de Correo */}
-                        {client.estado_cross_selling === 'Apto para Cross-Selling' && (
+                        
+                        {/* Si el cliente es APTO aparece el boton */}
+                        {(client.estado_cross_selling === 'Apto para Cross-Selling') && (
                             <button
-                                onClick={() => console.log('Visualizar Correo')}
+                                onClick={() => setShowMailModal(true)} //con el click, habilita el modal
                                 className="email-button"
                                 style={{ backgroundColor: scoreBgColor }}
                             >
-                                Visualizar Correo
+                                Enviar Correo
                             </button>
                         )}
                     </div>
@@ -272,6 +301,15 @@ const DetalleCliente = () => {
                 <FaArrowLeft className="return-icon" />
                 <span className="return-text-hover">Volver a inicio</span>
             </div>
+
+            {/* Renderizado del Modal */}
+            <ModalCorreo
+                isVisible={showMailModal} // se va a ver si esta en true
+                onClose={() => setShowMailModal(false)}
+                clientDni={client.dni}
+                clientName={client.nombre}
+                onSendSuccess={handleSendSuccess} // Cuando se conecte con el back, el mail va a ir a la DB
+            />
         </div>
     );
 };

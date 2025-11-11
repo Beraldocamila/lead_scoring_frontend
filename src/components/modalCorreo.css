@@ -1,0 +1,284 @@
+:root {
+    /* Variables Derivadas/Ajustadas para el Modal */
+    --color-foco: var(--primary-blue);
+    --color-principal-heading: var(--texto-principal);
+    --color-border: #d1d5db; 
+    --color-hover-send: #258557; 
+    --color-hover-edit: #d53232; /* Rojo más oscuro */
+    --color-hover-cancel: #ea6100; /* Naranja más oscuro */
+    --color-hover-back: #4338ca; /* Azul más oscuro para Volver */
+}
+
+/* ESTILOS DEL MODAL */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+}
+
+.modal-content {
+    background: var(--app-fondo);
+    padding: 30px; 
+    border-radius: 12px;
+    width: 100%;
+    max-width: 800px; 
+    box-shadow: var(--sombra-card);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; 
+    margin: 20px; 
+}
+
+/* Encabezado */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem; 
+    color: var(--color-principal-heading);
+    font-family: var(--font-principal);
+    font-weight: 600;
+}
+
+.modal-close-button {
+    background: none;
+    border: none;
+    font-size: 2rem; 
+    cursor: pointer;
+    color: var(--color-gray-text);
+    transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+    color: var(--texto-principal);
+}
+
+/* Cuerpo del Correo (Vista Previa/Edición) */
+.modal-body {
+    flex-grow: 1;
+    overflow-y: auto; 
+}
+
+.mail-textarea {
+    width: 94%; 
+    min-height: 350px;
+    padding: 20px;
+    resize: vertical;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    line-height: 1.7;
+    font-family: var(--font-principal);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    /* Estilos para el modo solo lectura */
+    background-color: var(--color-light-bg);
+    color: var(--color-gray-text);
+    cursor: default;
+}
+
+.mail-textarea--editing {
+    background-color: var(--app-fondo);
+    border-color: var(--color-foco); 
+    box-shadow: 0 0 0 3px rgba(80, 56, 237, 0.2); 
+    color: var(--texto-principal);
+    cursor: text;
+}
+
+/* Pie de Página y Botones */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px; 
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+    margin-top: 25px;
+}
+
+.modal-footer.footer-selection {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+    justify-content: center; 
+}
+
+.modal-button {
+    padding: 12px 20px; 
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: var(--font-principal);
+    transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+    color: white; 
+}
+
+.modal-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.modal-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Botón Enviar */
+.modal-button--send {
+    background-color: var(--score-verde);
+}
+
+.modal-button--send:hover:not(:disabled) {
+    background-color: var(--color-hover-send);
+}
+
+/* Botón Editar/Guardar Cambios  */
+.modal-button--edit {
+    background-color: var(--score-rojo);
+}
+
+.modal-button--edit:hover:not(:disabled) {
+    background-color: var(--color-hover-edit);
+}
+
+/* Botón Elegir Formato */
+.modal-button--back {
+    background-color: var(--primary-blue);
+}
+
+.modal-button--back:hover:not(:disabled) {
+    background-color: var(--color-hover-back);
+}
+
+
+/* Botón Cancelar */
+.modal-button--cancel {
+    background-color: var(--score-naranja);
+}
+
+.modal-button--cancel:hover:not(:disabled) {
+    background-color: var(--color-hover-cancel);
+}
+
+/* Mensajes */
+.error-message {
+    color: var(--score-rojo);
+    background-color: rgba(239, 68, 68, 0.1); 
+    border: 1px solid var(--score-rojo);
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* ESTILOS DE SELECCIÓN DE FORMATO */
+
+.format-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.format-selection-container h3 {
+    text-align: center;
+    color: var(--primary-blue);
+    margin-bottom: 0;
+}
+
+.selection-description {
+    text-align: center;
+    color: var(--color-gray-text);
+    margin-top: -10px;
+    font-style: italic;
+}
+
+.format-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    padding: 15px 0;
+}
+
+.format-card {
+    background-color: var(--color-light-bg);
+    border: 2px solid var(--color-light-bg);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.format-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.format-card h4 {
+    margin-top: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--texto-principal);
+    display: flex;
+    align-items: center;
+}
+
+.format-card p {
+    font-size: 0.9rem;
+    color: var(--color-gray-text);
+    line-height: 1.5;
+}
+
+
+/* Colores de Borde para las tarjetas de formato */
+.format-card.formal-format:hover {
+    border-color: var(--primary-blue);
+}
+.format-card.intermedio-format:hover { 
+    border-color: var(--score-verde);
+}
+.format-card.informal-format:hover { 
+    border-color: var(--score-naranja);
+}
+
+/* Etiqueta de Formato en Vista Previa */
+.format-info {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--color-gray-text);
+    font-weight: 500;
+}
+
+.format-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-left: 8px;
+    color: white;
+}
+
+.format-tag--formal { 
+    background-color: var(--primary-blue);
+}
+.format-tag--intermedio { 
+    background-color: var(--score-verde);
+}
+.format-tag--informal { 
+    background-color: var(--score-naranja);
+}

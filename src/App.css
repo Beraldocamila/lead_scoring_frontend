@@ -1,0 +1,23 @@
+/* VARIABLES GLOBALES */
+
+:root {
+    --primary-blue: #5038ED;
+    --score-verde: #2FA86F;
+    --score-naranja: #F97316;
+    --score-rojo: #EF4444;
+    --app-fondo: #FFFFFF;
+    --texto-principal: #000000;
+    --font-principal: 'Poppins', sans-serif;
+    --color-gray-text: #6b7280;
+    --color-light-bg: #f3f4f6;
+    --sombra-card: 0 8px 30px rgba(0, 0, 0, 0.2); 
+}
+
+/* ESTILOS BASE DEL SITIO */
+
+body {
+    margin: 0;
+    font-family: var(--font-principal);
+    background-color: var(--app-fondo);
+    color: var(--texto-principal);
+}
