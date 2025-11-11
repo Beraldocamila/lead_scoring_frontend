@@ -60,6 +60,9 @@ const Clientes = () => {
   const indicePrimero = indiceUltimo - clientesPorPagina;
   const clientesMostrados = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
+ 
+ 
+
 
   return (
     <div className="clientes-container">
@@ -67,7 +70,7 @@ const Clientes = () => {
       <header className="clientes-header">
         <div className="logo-section">
           <div className="logo-icon">
-            <span className="material-symbols-outlined">shield</span>
+            <span className="material-symbols-outlined">Logo</span>
           </div>
           <h1 className="logo-text">LeadScoring</h1>
         </div>
@@ -95,7 +98,7 @@ const Clientes = () => {
                   <span>Usuario</span>
                 </div>
 
-                <a href="#" className="dropdown-item">
+                <a href="/" className="dropdown-item">
                   <img src="/img/icono_personas.png" alt="Clientes" />
                   CLIENTES
                 </a>
@@ -223,10 +226,22 @@ const Clientes = () => {
               }
               disabled={paginaActual === totalPaginas}
             >
-              {">"}
+              {pageNumber}
             </button>
-          </div>
-        </div>
+          );
+        })}
+
+        <button
+          onClick={() =>
+            setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
+          }
+          disabled={paginaActual === totalPaginas}
+        >
+          {">"}
+        </button>
+      </div>
+    </div>
+
       </main>
     </div>
   );
