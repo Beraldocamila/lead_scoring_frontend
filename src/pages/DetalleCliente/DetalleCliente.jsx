@@ -18,6 +18,7 @@ const ProfileItem = ({ icon: Icon, title, value }) => (
       <p className="profile-title">{title}</p>
       <p className="profile-value">{value}</p>
     </div>
+    
   </div>
 );
 
