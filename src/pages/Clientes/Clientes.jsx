@@ -227,9 +227,12 @@ const Clientes = () => {
             </button>
           </div>
         </div>
+        
       </main>
     </div>
   );
 };
 
 export default Clientes;
+
+// probando
