@@ -10,34 +10,41 @@ import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
 
+// Componente para mostrar un item de perfil
 const ProfileItem = ({ icon: Icon, title, value }) => (
   <div className="profile-item">
     <div className="profile-icon-wrapper">
       <Icon className="profile-icon" />
     </div>
+    {/* Texto */}
     <div className="profile-text-group">
       <p className="profile-title">{title}</p>
       <p className="profile-value">{value}</p>
     </div>
-    
+
   </div>
 );
 
 const DetalleCliente = () => {
   const { dni } = useParams();
   const navigate = useNavigate();
+
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // 🟣 Por ahora las interacciones son simuladas
-  const [interacciones, setInteracciones] = useState([
-    {
+  const [showMailModal, setShowMailModal] = useState(false); // Estado del modal
+  const [interacciones, setInteracciones] = useState([]);
+
+  // Al enviar correctamente un correo desde el modal
+  const handleSendSuccess = (mailBody) => {
+    const newInteraction = {
       tipo: "Mail Enviado",
-      descripcion: "Propuesta Seguro de Salud",
-      fecha: "1 de Julio 2024"
-    }
-  ]);
+      descripcion: mailBody.substring(0, 50) + '...',
+      fecha: new Date().toLocaleDateString('es-AR'),
+    };
+    setInteracciones((prev) => [newInteraction, ...prev]);
+  };
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -45,11 +52,19 @@ const DetalleCliente = () => {
         const response = await api.get(`/predict/${dni}`);
         setClient(response.data);
 
-        // 🔵 ACA SE DEBERÍA IMPLEMENTAR EL ENDPOINT DE REPORTES de correo  DEL BACK
+        // ACA SE DEBERÍA IMPLEMENTAR EL ENDPOINT DE REPORTES de correo  DEL BACK
         // Ejemplo futuro:
         // const resp = await api.get(`/reportes/interacciones/${dni}`);
         // setInteracciones(resp.data);
 
+        // Por ahora simulamos una interacción
+        setInteracciones([
+          {
+            tipo: "Mail Enviado",
+            descripcion: "Propuesta Seguro de Salud",
+            fecha: "1 de Julio 2024"
+          }
+        ]);
       } catch (error) {
         console.error("Error al obtener datos del cliente:", error);
       } finally {
@@ -233,9 +248,14 @@ const DetalleCliente = () => {
               </p>
             </div>
 
+            {/* Si es apto, aparece el botón de enviar correo */}
             {nivel === "Alto" && (
-              <button className="email-button" style={{ backgroundColor: scoreColor }}>
-                Visualizar Correo
+              <button
+                onClick={() => setShowMailModal(true)}
+                className="email-button"
+                style={{ backgroundColor: scoreColor }}
+              >
+                Enviar Correo
               </button>
             )}
           </div>
@@ -247,6 +267,15 @@ const DetalleCliente = () => {
         <FaArrowLeft className="return-icon" />
         <span className="return-text-hover">Volver a inicio</span>
       </div>
+
+      {/* MODAL DE CORREO */}
+      <ModalCorreo
+        isVisible={showMailModal}
+        onClose={() => setShowMailModal(false)}
+        clientDni={dni}
+        clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
+        onSendSuccess={handleSendSuccess}
+      />
     </div>
   );
 };
