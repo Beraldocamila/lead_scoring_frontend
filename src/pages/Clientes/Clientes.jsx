@@ -220,16 +220,6 @@ const Clientes = () => {
                 {i + 1}
               </button>
             ))}
-            <button
-              onClick={() =>
-                setPaginaActual((prev) => Math.min(prev + 1, totalPaginas))
-              }
-              disabled={paginaActual === totalPaginas}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
 
         <button
           onClick={() =>
