@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { FaRegUser } from "react-icons/fa6";
 import { RiLockPasswordLine } from "react-icons/ri";
 
@@ -18,7 +18,10 @@ const Login = () => {
 
     // Obtenemos la función login del AuthContext
     const { login } = useAuth();
-    
+
+    // Inicializo el hook de navegación
+    const navigate = useNavigate();
+
     // Función para manejar el cambio y la validación en tiempo real
     const handleInputChange = (setter, value, fieldName) => {
         setter(value); // Actualiza el estado
@@ -58,7 +61,10 @@ const Login = () => {
         // LLAMADA AL CONTEXTO
         const result = await login(username, clave);
 
-        if (!result.success) {
+        if (result.success) {
+            // Si el login es exitoso, navegamos a la página principal de clientes
+            navigate('/clientes');
+        } else {
             // Si el login falla, el AuthContext devuelve el mensaje de error del backend.
             setError(result.error);
         }
@@ -86,7 +92,6 @@ const Login = () => {
                             required
                             aria-label="Username"
                             className="login-input"
-                            // **CLAVE DEL CAMBIO:** Se eliminó la propiedad maxLength
                         />
                     </div>
                     <div className="input-group">
@@ -100,7 +105,6 @@ const Login = () => {
                             required
                             aria-label="Password"
                             className="login-input"
-                            // **CLAVE DEL CAMBIO:** Se eliminó la propiedad maxLength
                         />
                     </div>
                     {/* Muestra el mensaje de error */}
@@ -111,7 +115,7 @@ const Login = () => {
                         // Deshabilitado si está cargando O si la longitud es inválida
                         disabled={loading || isLengthInvalid}
                     >
-                        {loading ? 'Iniciando Sesión...' : 'Login'}
+                        {loading ? 'Iniciando Sesión...' : 'Iniciar Sesión'}
                     </button>
                 </form>
 
