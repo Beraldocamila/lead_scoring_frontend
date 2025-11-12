@@ -1,0 +1,180 @@
+/* Contenedor principal de la página de login/registro */
+.login-page-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: var(--font-principal, 'Poppins', sans-serif);
+}
+
+/* Panel izquierdo: Formulario */
+.login-form-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--app-fondo, #FFFFFF);
+    padding: 20px;
+}
+
+.login-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 380px;
+}
+
+/* Estilo para el grupo de entrada (Icono + Input) */
+.input-group {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-light-bg, #f3f4f6);
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.input-icon {
+    color: var(--primary-blue);
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.login-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 1em;
+    padding: 5px 0;
+    color: var(--texto-principal, #000000);
+}
+
+.login-input::placeholder {
+    color: var(--color-gray-text, #6b7280);
+}
+
+/* Estilo para botones de Login y Register */
+.login-button,
+.register-button {
+    background-color: var(--primary-blue, #5038ED);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:hover,
+.register-button:hover {
+    background-color: #432cd9;
+    /* Tono más oscuro para el hover */
+    transform: translateY(-2px);
+}
+
+.login-button:disabled,
+.register-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Mensajes de Feedback */
+
+.error-message {
+    color: var(--score-rojo, #EF4444);
+    /* Rojo para errores */
+    text-align: center;
+    margin-top: -10px;
+    font-size: 0.9em;
+}
+
+.success-message {
+    color: var(--score-verde, #2FA86F);
+    /* Verde para éxito */
+    text-align: center;
+    margin-top: -10px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+/* Enlaces de navegación entre Login y Register */
+.link-to-register,
+.link-to-login {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--color-gray-text, #6b7280);
+}
+
+.link-to-register a,
+.link-to-login a {
+    color: var(--primary-blue, #5038ED);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-to-register a:hover,
+.link-to-login a:hover {
+    text-decoration: underline;
+}
+
+/* Panel derecho: Decoración y Logo */
+
+.login-decoration-panel {
+    flex: 1;
+    /* Degradado usando el color primario */
+    background: linear-gradient(135deg, #7c68f1, var(--primary-blue, #5038ED));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Estilo para el patrón de fondo */
+.login-decoration-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../public/img/rectangle.png');
+    background-size: cover;
+    background-position: center;
+
+    transform: scale(1.2);
+}
+
+
+.login-logo-card {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 40px 80px;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--sombra-card, 0 8px 30px rgba(0, 0, 0, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+    z-index: 1;
+}
+
+.login-logo-text {
+    font-size: 3em;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
