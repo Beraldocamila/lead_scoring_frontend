@@ -7,7 +7,7 @@ import DetalleCliente from './pages/DetalleCliente/DetalleCliente.jsx';
 import Clientes from './pages/Clientes/Clientes.jsx';
 import CorreosEnviados from "./pages/CorreosEnviados/CorreosEnviados.jsx";
 import Login from './pages/Login/Login.jsx';
-//import Register from './pages/Register/Register.jsx';
+import Register from './pages/Register/Register.jsx';
 
 // Componentes de Autenticación
 import { AuthProvider } from './contexts/AuthContext'; // Proveedor del Contexto
@@ -40,7 +40,7 @@ function App() {
         <Routes>
           {/* Rutas accesibles sin estar logueado */}
           <Route path="/" element={<Login />} />
-          {/*<Route path="/register" element={<Register />} /> */}
+          <Route path="/register" element={<Register />} /> 
 
           {/* Rutas que Requieren autenticación */}
           <Route

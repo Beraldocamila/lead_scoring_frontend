@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/api';
+import authService from '../services/authService';
 
 // Crea el contexto, definiendo su estructura inicial y valores por defecto.
 export const AuthContext = createContext({
@@ -39,8 +40,9 @@ export const AuthProvider = ({ children }) => {
     // Retorna { success: true } o { success: false, error: mensaje }
     const login = async (username, clave) => {
         try {
-            const response = await api.post('/login', { username, clave });
-            const token = response.data.access_token;
+            // Llamada a la función del servicio
+        const response = await authService.login(username, clave); 
+        const token = response.data.access_token;
 
             // Guarda el token en el almacenamiento local y actualiza el estado
             localStorage.setItem('accessToken', token);
