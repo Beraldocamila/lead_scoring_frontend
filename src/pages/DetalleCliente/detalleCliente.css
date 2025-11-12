@@ -2,17 +2,7 @@
 /* 0 - VARIABLES DE DISEÑO (Base) */
 
 :root {
-    /* Variables de Color */
-    --primary-blue: #5038ED;
-    --score-verde: #2FA86F;
-    --score-naranja: #F97316;
-    --score-rojo: #EF4444;
-    --app-fondo: #FFFFFF;
-    --texto-principal: #000000;
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-    --font-principal: 'Poppins', sans-serif;
-    --color-gray-text: #6b7280;
-    --color-light-bg: #f3f4f6;
 }
 
 /* Base del Componente */
