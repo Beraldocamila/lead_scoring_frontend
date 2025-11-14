@@ -1,0 +1,124 @@
+/* CONTENEDOR GENERAL */
+.container-menu {
+    position: relative;
+    display: inline-block;
+}
+
+/* BOTÓN QUE ABRE EL MENÚ */
+.header-user-menu-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-icon {
+    font-size: 26px;
+    color: var(--primary-blue);
+}
+
+/* DROPDOWN */
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 45px;
+    width: 240px;
+    background: var(--app-fondo);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    z-index: 20;
+    animation: fadeIn 0.18s ease-in-out;
+    font-family: var(--font-principal);
+    border: 1px solid var(--color-light-bg);
+    padding: 0px;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER DEL USUARIO */
+.dropdown-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--primary-blue);
+    border-bottom: 1px solid var(--color-borders);
+}
+
+.dropdown-item-header .dropdown-icon {
+    font-size: 20px;
+    opacity: 0.85;
+}
+
+/* ITEMS DEL MENÚ */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    color: var(--texto-principal);
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: var(--font-principal);
+    margin: 10px;
+}
+
+/* para botones (cerrar sesión) que usan <button> */
+.dropdown-item.logout-item {
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    margin: 10px;
+}
+
+/* ÍCONOS */
+.dropdown-icon {
+    font-size: 18px;
+    opacity: 0.85;
+}
+
+.user-icon{
+    color: var(--primary-blue);
+}
+/* HOVER */
+.dropdown-item:hover {
+    background: rgba(80, 56, 237, 0.08); /* Versión suave del primary blue */
+    color: var(--primary-blue);
+    border-radius: 6px;
+
+}
+
+.dropdown-item:hover .dropdown-icon {
+    color: var(--primary-blue);
+}
+
+/* SEPARADOR */
+.dropdown-separator {
+    margin: 10px 0;
+    border-top: 1px solid var(--color-borders);
+}
+
+/* CERRAR SESIÓN ROJO */
+.logout-item {
+    color: var(--score-rojo) !important;
+    font-weight: bold;
+}
+
+.logout-icon {
+    color: var(--score-rojo) !important;
+}
+
+.logout-item:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b20000 !important;
+}
+
+.logout-item:hover .logout-icon {
+    color: #b20000 !important;
+}

@@ -2,6 +2,7 @@ import "./CorreosEnviados.css";
 import correosData from "../../data/mockCorreos.json";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from '../../components/Header/Header'
 
 const CorreosEnviados = () => {
   const [filtroDni, setFiltroDni] = useState("");
@@ -39,61 +40,7 @@ const CorreosEnviados = () => {
   return (
     <div className="correos-container">
       {/* HEADER */}
-      <header className="correos-header">
-        <div className="logo-section">
-          <div className="logo-icon">
-            <span className="material-symbols-outlined">Logo</span>
-          </div>
-          <h1 className="logo-text">LeadScoring</h1>
-        </div>
-
-        <h2 className="page-title">CORREOS ENVIADOS</h2>
-
-        <div className="profile-section">
-          <div className="container-menu">
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="header-user-menu-button"
-            >
-              <img
-                className="container-menu-img"
-                src="/img/user.png"
-                alt="Menú de Usuario"
-              />
-              <span>{isUserMenuOpen ? "▲" : "▼"}</span>
-            </button>
-
-            {isUserMenuOpen && (
-              <div className="dropdown-menu">
-                <div className="dropdown-item-header">
-                  <img src="/img/icono_user.png" alt="Perfil" />
-                  <span>Usuario</span>
-                </div>
-                <a href="/" className="dropdown-item">
-                  <img src="/img/icono_personas.png" alt="Clientes" />
-                  CLIENTES
-                </a>
-                <a href="/correos-enviados" className="dropdown-item">
-                  <img src="./img/icono_mail.png" alt="Correos Enviados" />
-                  CORREOS ENVIADOS
-                </a>
-                <a href="#" className="dropdown-item">
-                  <img src="/img/icono_editar.png" alt="Editar Productos" />
-                  EDITAR PRODUCTOS
-                </a>
-                <div className="dropdown-separator"></div>
-                <a href="#" className="dropdown-item">
-                  <img
-                    src="/img/icono_cerrar_sesion.png"
-                    alt="Cerrar Sesión"
-                  />
-                  CERRAR SESIÓN
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <Header title="CORREOS ENVIADOS" />
 
       {/* MAIN */}
       <main className="correos-main">

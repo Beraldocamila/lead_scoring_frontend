@@ -20,6 +20,11 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('accessToken'));
     const [loading, setLoading] = useState(true);
 
+    // Guardo el nombre de usuario
+    const [user, setUser] = useState(
+        JSON.parse(localStorage.getItem("user")) || null
+    );
+
     // Efecto para manejar la configuración de Axios y el estado de la sesión
     useEffect(() => {
         if (accessToken) {
@@ -41,12 +46,18 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, clave) => {
         try {
             // Llamada a la función del servicio
-        const response = await authService.login(username, clave); 
-        const token = response.data.access_token;
+            const response = await authService.login(username, clave);
+            const token = response.data.access_token;
 
             // Guarda el token en el almacenamiento local y actualiza el estado
             localStorage.setItem('accessToken', token);
             setAccessToken(token); // Esto dispara el useEffect y configura Axios
+
+            // Guarda el username en localStorage
+            localStorage.setItem("user", JSON.stringify({ username }));
+
+            // Actualiza el estado global
+            setUser({ username });
 
             return { success: true };
 
@@ -71,6 +82,8 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         // Limpia estados y almacenamiento local
         localStorage.removeItem('accessToken');
+        localStorage.removeItem("user");
+        setUser(null);
         setAccessToken(null);
         setIsLoggedIn(false);
 
@@ -86,6 +99,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
+        user
     };
 
     return (
