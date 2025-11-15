@@ -106,19 +106,19 @@
 
 /* CERRAR SESIÓN ROJO */
 .logout-item {
-    color: var(--score-rojo) !important;
+    color: var(--score-rojo);
     font-weight: bold;
 }
 
 .logout-icon {
-    color: var(--score-rojo) !important;
+    color: var(--score-rojo);
 }
 
 .logout-item:hover {
     background: rgba(239, 68, 68, 0.12);
-    color: #b20000 !important;
+    color: #b20000;
 }
 
 .logout-item:hover .logout-icon {
-    color: #b20000 !important;
+    color: #b20000;
 }

@@ -2,12 +2,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     padding: 16px 32px;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #ffffff;
+    background-color: var(--app-fondo);
+    border-bottom: 1px solid var(--color-light-bg);
+
     margin-bottom: 30px;
     box-shadow: var(--sombra-card);
-
 }
 
 /* LOGO */
@@ -16,6 +17,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+
     font-weight: 700;
     font-size: 1.2rem;
     color: var(--primary-blue);
@@ -30,13 +32,12 @@
     margin: 0;
 }
 
-/* TITULO */
+/* TÍTULO */
 
 .header-page-title {
     font-size: 28px;
     font-weight: 600;
     color: var(--primary-blue);
-
     margin: 0;
     text-align: center;
     flex: 1;
