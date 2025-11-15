@@ -1,24 +1,45 @@
 /* VARIABLES GLOBALES */
 
 :root {
+    /* Colores principales */
     --primary-blue: #5038ED;
     --score-verde: #2FA86F;
     --score-naranja: #F97316;
     --score-rojo: #EF4444;
+
+    /* Background y texto */
     --app-fondo: #FFFFFF;
     --texto-principal: #000000;
+
+    /* Tipografía */
     --font-principal: 'Poppins', sans-serif;
+
+    /* Grises */
     --color-gray-text: #6b7280;
     --color-light-bg: #f3f4f6;
+
+    /* Sombra */
+    --sombra-card: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+    /* Borde */
     --color-borders: #c9c9c9;
-    --sombra-card: 0 8px 30px rgba(0, 0, 0, 0.2); 
 }
+
+/* RESET BÁSICO */
+
+body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 
 /* ESTILOS BASE DEL SITIO */
 
 body {
-    margin: 0;
     font-family: var(--font-principal);
     background-color: var(--app-fondo);
     color: var(--texto-principal);
 }
+
+
