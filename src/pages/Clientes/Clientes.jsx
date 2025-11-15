@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import api from "../../services/api"; // 👈 conexión con el backend
+import Header from '../../components/Header/Header'
 
 const Clientes = () => {
   const [clients, setClients] = useState([]); // clientes desde el backend
@@ -35,12 +36,12 @@ const Clientes = () => {
   if (loading) return <p>Cargando clientes...</p>;
   if (error) return <p>{error}</p>;
 
-  // 🔍 Obtener productos únicos para el filtro dinámico
+  // Obtener productos únicos para el filtro dinámico
   const uniqueProducts = Array.from(
     new Set(clients.flatMap((c) => c.productos || []))
   );
 
-  // 🔎 Filtrado por nombre, DNI y producto
+  // Filtrado por nombre, DNI y producto
   let clientesFiltrados = clients.filter(
     (c) =>
       (c.nombre?.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -48,82 +49,24 @@ const Clientes = () => {
       (filtroProducto === "" || c.productos?.includes(filtroProducto))
   );
 
-  // 🔢 Ordenamiento
+  // Ordenamiento
   if (orden === "Nombre") {
     clientesFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
   } else if (orden === "DNI") {
     clientesFiltrados.sort((a, b) => a.dni.localeCompare(b.dni));
   }
 
-  // 📄 Paginación
+  // Paginación
   const indiceUltimo = paginaActual * clientesPorPagina;
   const indicePrimero = indiceUltimo - clientesPorPagina;
   const clientesMostrados = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / clientesPorPagina);
- 
- 
-
 
   return (
     <div className="clientes-container">
+
       {/* HEADER */}
-      <header className="clientes-header">
-        <div className="logo-section">
-          <div className="logo-icon">
-            <span className="material-symbols-outlined">Logo</span>
-          </div>
-          <h1 className="logo-text">LeadScoring</h1>
-        </div>
-
-        <h2 className="page-title">CLIENTES</h2>
-
-        <div className="profile-section">
-          <div className="container-menu">
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="header-user-menu-button"
-            >
-              <img
-                className="container-menu-img"
-                src="/img/user.png"
-                alt="Menú de Usuario"
-              />
-              <span>{isUserMenuOpen ? "▲" : "▼"}</span>
-            </button>
-
-            {isUserMenuOpen && (
-              <div className="dropdown-menu">
-                <div className="dropdown-item-header">
-                  <img src="/img/icono_user.png" alt="Perfil" />
-                  <span>Usuario</span>
-                </div>
-
-                <a href="/" className="dropdown-item">
-                  <img src="/img/icono_personas.png" alt="Clientes" />
-                  CLIENTES
-                </a>
-
-                <a href="#" className="dropdown-item">
-                  <img src="/img/icono_mail.png" alt="Correos Enviados" />
-                  CORREOS ENVIADOS
-                </a>
-
-                <a href="#" className="dropdown-item">
-                  <img src="/img/icono_editar.png" alt="Editar Productos" />
-                  EDITAR PRODUCTOS
-                </a>
-
-                <div className="dropdown-separator"></div>
-
-                <a href="#" className="dropdown-item">
-                  <img src="/img/icono_cerrar_sesion.png" alt="Cerrar Sesión" />
-                  CERRAR SESIÓN
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <Header title="CLIENTES" />
 
       {/* MAIN CONTENT */}
       <main className="clientes-main">
@@ -238,5 +181,3 @@ const Clientes = () => {
 };
 
 export default Clientes;
-
-// probando

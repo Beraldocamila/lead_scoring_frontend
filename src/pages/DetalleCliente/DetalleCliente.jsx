@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import './detalleCliente.css';
-import ModalCorreo from '../../components/ModalCorreo'
+import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
+import Header from '../../components/Header/Header'
 
 // Íconos
 import { FaRegHeart, FaRegUser, FaRegCheckCircle, FaRegEnvelope, FaArrowLeft } from 'react-icons/fa';
@@ -101,35 +102,7 @@ const DetalleCliente = () => {
     <div className="page-container">
       <div className="main-content">
         {/* HEADER */}
-        <div className="header-section">
-          <div className="logo-section">
-            <span className="material-symbols-outlined logo-icon">LD</span>
-            <h1 className="logo-text">LeadScoring</h1>
-          </div>
-          <div className="page-title-group">
-            <h2 className="header-page-title">
-              CLIENTE - {features.nombre_completo || `${features.nombre} ${features.apellido}`}
-            </h2>
-          </div>
-          <div className="container-menu">
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="header-user-menu-button"
-            >
-              <img className="container-menu-img" src="/img/user.png" alt="Usuario" />
-              <span>{isUserMenuOpen ? "▲" : "▼"}</span>
-            </button>
-            {isUserMenuOpen && (
-              <div className="dropdown-menu">
-                <a href="#" className="dropdown-item"><img src="/img/icono_personas.png" alt="" />CLIENTES</a>
-                <a href="#" className="dropdown-item"><img src="/img/icono_mail.png" alt="" />CORREOS ENVIADOS</a>
-                <a href="#" className="dropdown-item"><img src="/img/icono_editar.png" alt="" />EDITAR PRODUCTOS</a>
-                <div style={{ borderTop: "1px solid #e5e7eb", margin: "0.25rem 0" }}></div>
-                <a href="#" className="dropdown-item"><img src="/img/icono_cerrar_sesion.png" alt="" />CERRAR SESIÓN</a>
-              </div>
-            )}
-          </div>
-        </div>
+        <Header title={`CLIENTE - ${features.nombre_completo || features.nombre + " " + features.apellido}`} />
 
         {/* CUERPO PRINCIPAL */}
         <div className="column-layout">

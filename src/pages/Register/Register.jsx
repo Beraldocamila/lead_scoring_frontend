@@ -6,7 +6,7 @@ import { MdOutlineMailOutline } from "react-icons/md";
 
 import './register.css';
 import authService from '../../services/authService';
-
+import useAuth from '../../hooks/useAuth';
 
 // Constantes de Validación
 const MAX_LENGTH = 20;
@@ -19,6 +19,7 @@ const Register = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const { login } = useAuth(); // guardo el usuario logueado
     const navigate = useNavigate();
 
     // Función de validación de longitud y email en tiempo real
@@ -41,12 +42,44 @@ const Register = () => {
     };
 
 
+    // const handleRegister = async (e) => {
+
+    //     
+    //     try {
+
+    //         const data = await authService.register(username, clave, email);
+
+    //         // REGISTRO EXITOSO
+    //         console.log('Registro exitoso:', data.message);
+    //         alert(`¡Registro exitoso! ${data.message}.`);
+
+    //         login(data.user, data.clave);
+    //         // Redirigir al usuario al login después del éxito
+    //         navigate('/clientes');
+
+    //     } catch (error) {
+    //         // Captura errores del servidor (ej: 400 'Username already registered')
+    //         console.error('API Error:', error);
+
+    //         let errorMessage = 'Error de conexión o servidor no disponible.';
+
+    //         // Intenta extraer el mensaje de error de FastAPI/Axios
+    //         if (error.response && error.response.data && error.response.data.detail) {
+    //             errorMessage = error.response.data.detail;
+    //         }
+
+    //         setError(errorMessage);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        //  VALIDACIONES LOCALES FINALES 
+        // VALIDACIONES LOCALES FINALES 
         if (username.length < MIN_LENGTH || username.length > MAX_LENGTH ||
             clave.length < MIN_LENGTH || clave.length > MAX_LENGTH ||
             username.trim() === '' || email.trim() === '' || clave.trim() === '') {
@@ -55,36 +88,38 @@ const Register = () => {
             setLoading(false);
             return;
         }
-
         //  LLAMADA AL BACKEND DE FASTAPI USANDO EL SERVICIO 
         try {
             // Llama a la función 'register' de authService.js
             // Los datos se envían a http://127.0.0.1:8000/register
             const data = await authService.register(username, clave, email);
-
+            
             // REGISTRO EXITOSO
-            console.log('Registro exitoso:', data.message);
-            alert(`¡Registro exitoso! ${data.message}. Serás redirigido al Login.`);
+            alert(`${data.message}.`);
 
-            // Redirigir al usuario al login después del éxito
-            navigate('/');
+            // Hace LOGIN automático usando AuthContext
+            const loginResult = await login(username, clave);
+
+            if (loginResult.success) {
+                navigate('/clientes');  // 3️⃣ Ahora sí te lleva directo
+            } else {
+                setError("Error al iniciar sesión automáticamente.");
+            }
 
         } catch (error) {
-            // Captura errores del servidor (ej: 400 'Username already registered')
-            console.error('API Error:', error);
-
             let errorMessage = 'Error de conexión o servidor no disponible.';
 
-            // Intenta extraer el mensaje de error de FastAPI/Axios
-            if (error.response && error.response.data && error.response.data.detail) {
+            if (error.response?.data?.detail) {
                 errorMessage = error.response.data.detail;
             }
 
             setError(errorMessage);
+
         } finally {
             setLoading(false);
         }
     };
+
 
     // Lógica para deshabilitar el botón si hay errores de longitud o cargando
     const isInvalid = username.length > MAX_LENGTH || username.length < MIN_LENGTH ||
