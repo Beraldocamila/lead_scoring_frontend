@@ -73,7 +73,7 @@ const CorreosEnviados = () => {
               setPaginaActual(1);
             }}
           >
-            <option value="">--Filtrar por: Póliza</option>
+            <option value="">Filtrar por: Póliza</option>
             <option value="Auto">Auto</option>
             <option value="Hogar">Hogar</option>
             <option value="Vida">Vida</option>

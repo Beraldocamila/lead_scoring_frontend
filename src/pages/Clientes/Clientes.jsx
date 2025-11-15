@@ -100,7 +100,7 @@ const Clientes = () => {
               setPaginaActual(1);
             }}
           >
-            <option value="">--Filtrar por: Producto</option>
+            <option value="">Filtrar por: Producto</option>
             {uniqueProducts.map((p, i) => (
               <option key={i} value={p}>
                 {p}

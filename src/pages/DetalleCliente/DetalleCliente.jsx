@@ -236,7 +236,7 @@ const DetalleCliente = () => {
       </div>
 
       {/* Botón volver */}
-      <div className="fixed-return-button" onClick={() => navigate('/')}>
+      <div className="fixed-return-button" onClick={() => navigate('/clientes')}>
         <FaArrowLeft className="return-icon" />
         <span className="return-text-hover">Volver a inicio</span>
       </div>
