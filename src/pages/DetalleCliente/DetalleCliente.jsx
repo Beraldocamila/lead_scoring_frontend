@@ -4,12 +4,17 @@ import api from "../../services/api";
 import './detalleCliente.css';
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import Header from '../../components/Header/Header'
-
 // Íconos
-import { FaRegHeart, FaRegUser, FaRegCheckCircle, FaRegEnvelope, FaArrowLeft } from 'react-icons/fa';
+import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
+import { IoLocationOutline } from "react-icons/io5";
+import { BiIdCard } from "react-icons/bi";
+import { RiBarChartFill } from "react-icons/ri";
+
+//Spinner
+import LoadingSpinner from '../../components/Spinner/Spinner';
 
 // Componente para mostrar un item de perfil
 const ProfileItem = ({ icon: Icon, title, value }) => (
@@ -75,7 +80,8 @@ const DetalleCliente = () => {
     fetchClientData();
   }, [dni]);
 
-  if (loading) return <p>Cargando información del cliente...</p>;
+  // SPINNER MIENTRAS CARGA
+  if (loading) return <LoadingSpinner text="Cargando información del cliente." />;
   if (!client) return <p>No se encontró información del cliente.</p>;
 
   const { score, nivel, features } = client;
@@ -113,13 +119,13 @@ const DetalleCliente = () => {
               <h3 className="info-card-title">PERFIL Y CONTACTO</h3>
               <div className="profile-grid">
                 <ProfileItem icon={FaRegUser} title="Nombre" value={features.nombre_completo} />
-                <ProfileItem icon={FaRegCheckCircle} title="DNI" value={dni} />
+                <ProfileItem icon={BiIdCard} title="DNI" value={dni} />
                 <ProfileItem icon={MdAlternateEmail} title="Mail" value={features.email || `${features.nombre.toLowerCase()}@mail.com`} />
                 <ProfileItem icon={LiaBirthdayCakeSolid} title="Edad" value={`${features.edad} años`} />
                 <ProfileItem icon={MdOutlineWorkOutline} title="Ocupación" value={features.ocupacion || "No especificada"} />
                 <ProfileItem icon={FaRegHeart} title="Estado Civil" value={features.estado_civil || "No especificado"} />
-                <ProfileItem icon={MdOutlineHealthAndSafety} title="Provincia" value={features.provincia || "Sin dato"} />
-                <ProfileItem icon={FaRegEnvelope} title="Score" value={`${score}/100 (${nivel})`} />
+                <ProfileItem icon={IoLocationOutline} title="Provincia" value={features.provincia || "Sin dato"} />
+                <ProfileItem icon={RiBarChartFill} title="Score" value={`${score}/100 (${nivel})`} />
               </div>
             </div>
 
