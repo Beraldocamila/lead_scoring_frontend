@@ -52,10 +52,10 @@ const UserMenu = () => {
                     </Link>
 
                     {/* EDITAR PRODUCTOS */}
-                    {/* <Link to="#" className="dropdown-item">
+                    {<Link to="/productos" className="dropdown-item">
                         <FiEdit className="dropdown-icon" />
                         EDITAR PRODUCTOS
-                    </Link> */}
+                    </Link>}
 
                     <div className="dropdown-separator"></div>
 

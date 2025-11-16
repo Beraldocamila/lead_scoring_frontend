@@ -8,6 +8,8 @@ import Clientes from './pages/Clientes/Clientes.jsx';
 import CorreosEnviados from "./pages/CorreosEnviados/CorreosEnviados.jsx";
 import Login from './pages/Login/Login.jsx';
 import Register from './pages/Register/Register.jsx';
+import Productos from './pages/Productos/Productos.jsx';
+
 
 // Componentes de Autenticación
 import { AuthProvider } from './contexts/AuthContext'; // Proveedor del Contexto
@@ -55,6 +57,12 @@ function App() {
             path="/correos-enviados"
             element={<PrivateRoute element={CorreosEnviados} />}
           />
+
+          <Route 
+          path="/productos" 
+          element={<PrivateRoute element={Productos} />} 
+          />
+
 
         </Routes>
       </AuthProvider>
