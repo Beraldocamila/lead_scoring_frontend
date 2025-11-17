@@ -220,7 +220,7 @@ const DetalleCliente = () => {
               <div className="info-card seguros-card">
                 <h3 className="info-card-title">PRODUCTO RECOMENDADO</h3>
 
-                <p className="seguros-subtitle">Basado en el análisis de tu perfil</p>
+                <p className="seguros-subtitle">Basado en el análisis del perfil del cliente </p>
 
                 <div className="seguros-tags">
                   {productos_recomendados.map((prod, i) => {
