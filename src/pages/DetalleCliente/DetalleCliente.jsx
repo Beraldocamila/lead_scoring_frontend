@@ -181,18 +181,6 @@ const DetalleCliente = () => {
                   </div>
                 ))}
               </div>
-              {features.polizas_detalle && features.polizas_detalle.length > 0 && (
-                <div className="polizas-detalle-list">
-                  <h4 style={{ marginTop: "1rem", fontWeight: 600 }}>Coberturas</h4>
-                  {features.polizas_detalle.map((p, i) => (
-                    <div key={i} className="poliza-item">
-                      <p><strong>{p.tipo_seguro.toUpperCase()}:</strong> {p.cobertura}</p>
-                      <p><strong>Suma asegurada:</strong> ${formatNumber(p.suma_asegurada)}</p>
-                      <p><strong>Prima mensual:</strong> ${formatNumber(p.prima_pagada)}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* INTERACCIONES */}
