@@ -173,18 +173,24 @@ const DetalleCliente = () => {
               </div>
 
               {/* NUEVO BLOQUE DE COBERTURAS */}
-              {features.polizas_detalle && features.polizas_detalle.length > 0 && (
-                <div className="polizas-detalle-list">
-                  <h4 style={{ marginTop: "1rem", fontWeight: 600 }}>Coberturas</h4>
-                  {features.polizas_detalle.map((p, i) => (
-                    <div key={i} className="poliza-item">
-                      <p><strong>{p.tipo_seguro.toUpperCase()}:</strong> {p.cobertura}</p>
-                      <p><strong>Suma asegurada:</strong> ${formatNumber(p.suma_asegurada)}</p>
-                      <p><strong>Prima mensual:</strong> ${formatNumber(p.prima_pagada)}</p>
+              <div className="polizas-detalle-list">
+                <h4>Coberturas</h4>
+
+                {features.polizas_detalle.map((p, i) => (
+                  <div key={i} className="poliza-item">
+
+                    <span className="poliza-chip">
+                      {p.tipo_seguro.toUpperCase()}
+                    </span>
+
+                    <div className="poliza-info">
+                      <span><strong>Cobertura:</strong> {p.cobertura}</span>
+                      <span><strong>Suma:</strong> ${formatNumber(p.suma_asegurada)}</span>
+                      <span><strong>Prima:</strong> ${formatNumber(p.prima_pagada)}</span>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* INTERACCIONES */}
