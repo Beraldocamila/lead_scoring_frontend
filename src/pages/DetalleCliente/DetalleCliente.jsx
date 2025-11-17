@@ -22,12 +22,10 @@ const ProfileItem = ({ icon: Icon, title, value }) => (
     <div className="profile-icon-wrapper">
       <Icon className="profile-icon" />
     </div>
-    {/* Texto */}
     <div className="profile-text-group">
       <p className="profile-title">{title}</p>
       <p className="profile-value">{value}</p>
     </div>
-
   </div>
 );
 
@@ -37,12 +35,10 @@ const DetalleCliente = () => {
 
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  const [showMailModal, setShowMailModal] = useState(false); // Estado del modal
+  const [showMailModal, setShowMailModal] = useState(false);
   const [interacciones, setInteracciones] = useState([]);
 
-  // Al enviar correctamente un correo desde el modal
   const handleSendSuccess = (mailBody) => {
     const newInteraction = {
       tipo: "Mail Enviado",
@@ -58,12 +54,6 @@ const DetalleCliente = () => {
         const response = await api.get(`/predict/${dni}`);
         setClient(response.data);
 
-        // ACA SE DEBERÍA IMPLEMENTAR EL ENDPOINT DE REPORTES de correo  DEL BACK
-        // Ejemplo futuro:
-        // const resp = await api.get(`/reportes/interacciones/${dni}`);
-        // setInteracciones(resp.data);
-
-        // Por ahora simulamos una interacción
         setInteracciones([
           {
             tipo: "Mail Enviado",
@@ -84,10 +74,9 @@ const DetalleCliente = () => {
   if (loading) return <LoadingSpinner text="Cargando información del cliente." />;
   if (!client) return <p>No se encontró información del cliente.</p>;
 
-  const { score, nivel, features } = client;
+  const { score, nivel, features, productos_recomendados } = client;
   const formatNumber = (num) => (num || 0).toLocaleString('es-AR');
 
-  // Colores del score
   let scoreColor;
   if (score >= 71) scoreColor = 'var(--score-verde)';
   else if (score >= 41) scoreColor = 'var(--score-naranja)';
@@ -107,14 +96,14 @@ const DetalleCliente = () => {
   return (
     <div className="page-container">
       <div className="main-content">
-        {/* HEADER */}
         <Header title={`CLIENTE - ${features.nombre_completo || features.nombre + " " + features.apellido}`} />
 
-        {/* CUERPO PRINCIPAL */}
         <div className="column-layout">
+          
           {/* COLUMNA IZQUIERDA */}
           <div className="col-izquierda">
-            {/* PERFIL Y CONTACTO */}
+
+            {/* PERFIL */}
             <div className="info-card">
               <h3 className="info-card-title">PERFIL Y CONTACTO</h3>
               <div className="profile-grid">
@@ -129,10 +118,11 @@ const DetalleCliente = () => {
               </div>
             </div>
 
-            {/* ESTADO DE SEGUROS */}
+            {/* SEGUROS */}
             <div className="info-card seguros-card">
               <h3 className="info-card-title">ESTADO DE SEGUROS</h3>
               <p className="seguros-subtitle">Pólizas activas</p>
+
               <div className="seguros-tags">
                 {["Hogar", "Auto", "Vida", "Salud"].map((tipo) => {
                   const Icon = seguroIcons[tipo];
@@ -172,7 +162,6 @@ const DetalleCliente = () => {
                 </div>
               </div>
 
-              {/* NUEVO BLOQUE DE COBERTURAS */}
               {features.polizas_detalle && features.polizas_detalle.length > 0 && (
                 <div className="polizas-detalle-list">
                   <h4 style={{ marginTop: "1rem", fontWeight: 600 }}>Coberturas</h4>
@@ -190,7 +179,7 @@ const DetalleCliente = () => {
             {/* INTERACCIONES */}
             <div className="info-card interacciones-card">
               <h3 className="info-card-title">INTERACCIONES</h3>
-              {interacciones && interacciones.length > 0 ? (
+              {interacciones.length > 0 ? (
                 interacciones.map((interaccion, index) => (
                   <div key={index} className="interaccion-item">
                     <FaRegEnvelope className="interaccion-icon" />
@@ -213,21 +202,47 @@ const DetalleCliente = () => {
 
           {/* COLUMNA DERECHA */}
           <div className="col-derecha">
+
             <div className="score-card" style={{ borderColor: scoreColor, backgroundColor: `color-mix(in srgb, ${scoreColor} 10%, white)` }}>
               <h3 className="score-title" style={{ color: scoreColor }}>Score Actual</h3>
+
               <div className="score-bar-container">
                 <div className="score-bar-fill" style={{ width: `${score}%`, backgroundColor: scoreColor }}></div>
               </div>
+
               <div className="score-value-container">
                 <p className="score-value" style={{ color: scoreColor }}>{score.toFixed(0)}/100</p>
                 <p className="score-rango" style={{ backgroundColor: scoreColor }}>{nivel}</p>
               </div>
+
               <p className="score-message">
                 {nivel === "Alto" ? "Apto para Cross-Selling" : "No apto para Cross-Selling"}
               </p>
             </div>
 
-            {/* Si es apto, aparece el botón de enviar correo */}
+
+            {/* PRODUCTO RECOMENDADO */}
+            {productos_recomendados && productos_recomendados.length > 0 && (
+              <div className="info-card seguros-card">
+                <h3 className="info-card-title">PRODUCTO RECOMENDADO</h3>
+
+                <p className="seguros-subtitle">Basado en el análisis del perfil del cliente </p>
+
+                <div className="seguros-tags">
+                  {productos_recomendados.map((prod, i) => {
+                    const tipo = prod.charAt(0).toUpperCase() + prod.slice(1);
+                    const Icon = seguroIcons[tipo] || FaRegCheckCircle;
+                    return (
+                      <div key={i} className="seguro-tag seguro-tag--active">
+                        <Icon /> {tipo}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* BOTÓN SI ES ALTO */}
             {nivel === "Alto" && (
               <button
                 onClick={() => setShowMailModal(true)}
@@ -237,6 +252,25 @@ const DetalleCliente = () => {
                 Enviar Correo
               </button>
             )}
+
+            {/* BOTÓN SI ES MEDIO */}
+            {nivel === "Medio" && (
+              <div className="info-card" style={{ padding: "1.2rem", marginTop: "1rem" }}>
+                <p style={{ fontSize: "0.95rem", marginBottom: "1rem" }}>
+                  El nivel de este cliente es  <strong> MEDIO</strong>.  
+                  ¿Querés enviar una recomendación de todas formas?
+                </p>
+
+                <button
+                  onClick={() => setShowMailModal(true)}
+                  className="email-button"
+                  style={{ backgroundColor: scoreColor }}
+                >
+                  Enviar Correo
+                </button>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
@@ -247,13 +281,14 @@ const DetalleCliente = () => {
         <span className="return-text-hover">Volver a inicio</span>
       </div>
 
-      {/* MODAL DE CORREO */}
+      {/* MODAL */}
       <ModalCorreo
         isVisible={showMailModal}
         onClose={() => setShowMailModal(false)}
         clientDni={dni}
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
+        idProducto={productos_recomendados?.[0] ?? null}
       />
     </div>
   );
