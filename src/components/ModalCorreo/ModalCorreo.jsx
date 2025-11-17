@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './modalCorreo.css';
-
+import api from "../../services/api";
 // URL base para la API de envío de correos
 // const API_MAIL_ENDPOINT = ; 
 
@@ -10,29 +10,14 @@ const steps = {
     preview_edit: 'preview_edit',
 };
 
-// MOCK: formatos de correos (simulacion del back)
-const generateDraft = (formatType, clientName) => { //segun el formato que elija el usuario, se va a generar un texto
-    switch (formatType) {
-        case 'formal':
-            return `Estimado/a ${clientName}:\n\nLe comparto una propuesta de seguro que puede resultarle de interés. La opción [Nombre de Póliza Formal] ofrece una cobertura completa y confiable.\n\nQuedo a su disposición por cualquier consulta o si desea coordinar una llamada.\n\nSaludos cordiales,\n[Tu Nombre]`;
 
-        case 'intermedio':
-            return `Hola ${clientName},\n\nTe quería acercar una propuesta de seguro que puede ser una buena opción para vos. El plan [Nombre de Póliza Intermedia] tiene una excelente combinación de cobertura y precio.\n\nSi te interesa o querés charlar algún detalle, estoy a disposición.\n\nSaludos,\n[Tu Nombre]`;
-
-        case 'informal':
-            return `¡Hola ${clientName}!\n\nTe dejo una propuesta de seguro que creemos que te puede servir. El plan [Nombre de Póliza Simple] es práctico, fácil y muy completo.\n\nDale una mirada y cualquier duda me escribís.\n\n¡Abrazo!,\n[Tu Nombre]`;
-
-        default:
-            return `Borrador predeterminado para ${clientName}. (Debe seleccionar un formato).`;
-    }
-};
-
-const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, onSendSuccess }) => {
+const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idProducto, onSendSuccess }) => {
 
     // primer modal en select_format para forzar la elección
     const [currentStep, setCurrentStep] = useState(steps.select_format); // primero inicia en "definir formato" despues puede cambiar a editar
     const [isSending, setIsSending] = useState(false);
     const [isEditing, setIsEditing] = useState(false); // controla el modo para editar. 
+    const [draftSubject, setDraftSubject] = useState('');
     const [draftText, setDraftText] = useState('');
     const [error, setError] = useState(null);
     const [selectedFormat, setSelectedFormat] = useState(null); // almacena el formato elegido por el usuario
@@ -51,17 +36,44 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, onSendSuccess 
     if (!isVisible) return null;
 
     // LÓGICA DE MANEJO DE PASOS
-
+const toneMap = {
+  formal: "muy_formal",
+  intermedio: "neutral",
+  informal: "informal"
+};
     // Función que se llama al elegir un formato
-    const handleFormatSelect = (format) => {
-        setSelectedFormat(format);
-        // Genera el borrador inmediatamente con el nuevo formato
-        const newDraft = generateDraft(format, clientName);
-        setDraftText(newDraft);
-        setCurrentStep(steps.preview_edit); // Pasar al paso de Vista Previa/Edición
-    };
+const handleFormatSelect = async (format) => {
+    setSelectedFormat(format);
+    setError(null);
 
-    // Función para volver a la selección de formato
+    try {
+        const backendTone = toneMap[format];
+
+        const response = await api.post("/correos/ia/generar-borrador", {
+            id_persona: clientId || 0,
+            id_producto: idProducto || 1,
+            etapa_relacion: "prospecto",
+            formalidad: backendTone
+        });
+
+        const { cuerpo_sugerido, asunto_sugerido } = response.data;
+
+        // Pasar HTML → texto plano
+        const plainText = cuerpo_sugerido
+            .replace(/<br\s*\/?>/gi, "\n")
+            .replace(/<\/p>/gi, "\n\n")
+            .replace(/<[^>]*>?/gm, "");
+
+        setDraftText(plainText);
+        setDraftSubject(asunto_sugerido || "");
+        setCurrentStep(steps.preview_edit);
+    } catch (err) {
+        console.error(err);
+        setError("Error generando el borrador.");
+    }
+};
+
+   // Función para volver a la selección de formato
     const handleGoBackToSelect = () => {
         setCurrentStep(steps.select_format);
         setIsEditing(false); // Aseguramos que no quede en modo edición
@@ -72,23 +84,42 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, onSendSuccess 
         setIsEditing(!isEditing);
     };
 
+
     // FUNCIÓN DE ENVÍO
 
-    const handleSendMailMock = () => {
-        // Simulación de éxito
-        setIsSending(true);
-        setTimeout(() => {
-            // Llama a la función de éxito para actualizar las interacciones
-            onSendSuccess(`Propuesta Seguro de ...`);
-            alert(` Correo enviado con éxito a ${clientName}!`);
-            setIsSending(false);
-            onClose();
-            // Restablecer el estado para la próxima apertura
-            setCurrentStep(steps.select_format);
-            setDraftText('');
-            setSelectedFormat(null);
-        }, 800);
-    };
+const handleSendMail = async () => {
+  try {
+    setIsSending(true);
+
+    const response = await api.post("/correos/ia/enviar-correo", {
+      id_persona: clientId,
+      id_producto: idProducto || 1,
+      asunto: draftSubject,
+      cuerpo: draftText,
+    });
+
+    // El backend devuelve status, mensaje, id_correo_log
+    onSendSuccess(response.data.mensaje);
+
+    alert(`Correo enviado con éxito a ${clientName}!`);
+
+    // Reset de estados
+    setIsSending(false);
+    onClose();
+    setCurrentStep(steps.select_format);
+    setDraftText('');
+    setSelectedFormat(null);
+
+  } catch (error) {
+    console.error("Error al enviar correo:", error);
+
+    let errMsg = error?.response?.data?.detail || "Error desconocido";
+    alert("Error al enviar correo: " + errMsg);
+
+    setIsSending(false);
+  }
+};
+
 
     // RENDERIZADO DEL PASO DE SELECCIÓN DE FORMATO
     const renderFormatSelection = () => (
@@ -143,6 +174,16 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, onSendSuccess 
                     Formato Seleccionado: <span className={`format-tag format-tag--${selectedFormat}`}>{selectedFormat?.toUpperCase()}</span>
                 </div>
 
+                <input
+                    className="mail-subject-input"
+                    value={draftSubject}
+                    onChange={(e) => setDraftSubject(e.target.value)}
+                    placeholder="Asunto del correo"
+                    readOnly={!isEditing}
+                    disabled={isSending}
+                    style={{ marginBottom: "10px", width: "100%" }}
+                />
+
                 <textarea
                     className={`mail-textarea ${isEditing ? 'mail-textarea--editing' : ''}`}
                     value={draftText}
@@ -156,7 +197,7 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, onSendSuccess 
                 {/* Botón ENVIAR */}
                 <button
                     className="modal-button modal-button--send"
-                    onClick={handleSendMailMock} // <-- Usamos el MOCK
+                    onClick={handleSendMail} // <-- Usamos el MOCK
                     disabled={isSending || draftText.length < 10}
                 >
                     {isSending ? 'Enviando...' : 'Enviar'}
