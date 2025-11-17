@@ -2,8 +2,9 @@ import "./Clientes.css";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import api from "../../services/api"; // 👈 conexión con el backend
+import api from "../../services/api"; // conexión con el backend
 import Header from '../../components/Header/Header'
+import LoadingSpinner from "../../components/Spinner/Spinner";
 
 const Clientes = () => {
   const [clients, setClients] = useState([]); // clientes desde el backend
@@ -17,7 +18,7 @@ const Clientes = () => {
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // ✅ Trae los clientes del backend (ya incluye productos)
+  // Trae los clientes del backend (ya incluye productos)
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -32,8 +33,8 @@ const Clientes = () => {
     };
     fetchClients();
   }, []);
-
-  if (loading) return <p>Cargando clientes...</p>;
+  // SPINNER MIENTRAS CARGA
+  if (loading) return <LoadingSpinner text="Cargando clientes." />;
   if (error) return <p>{error}</p>;
 
   // Obtener productos únicos para el filtro dinámico
@@ -83,6 +84,8 @@ const Clientes = () => {
             }}
           />
 
+
+        
           <select
             className="ordenar"
             value={orden}
@@ -164,16 +167,16 @@ const Clientes = () => {
               </button>
             ))}
 
-        <button
-          onClick={() =>
-            setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
-          }
-          disabled={paginaActual === totalPaginas}
-        >
-          {">"}
-        </button>
-      </div>
-    </div>
+            <button
+              onClick={() =>
+                setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
+              }
+              disabled={paginaActual === totalPaginas}
+            >
+              {">"}
+            </button>
+          </div>
+        </div>
 
       </main>
     </div>

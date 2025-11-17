@@ -4,17 +4,6 @@
     display: inline-block;
 }
 
-/* BOTÓN QUE ABRE EL MENÚ */
-.header-user-menu-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
-
-.menu-icon {
-    font-size: 26px;
-    color: var(--primary-blue);
-}
 
 /* DROPDOWN */
 .dropdown-menu {
@@ -34,8 +23,15 @@
 
 /* Animación */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* HEADER DEL USUARIO */
@@ -43,9 +39,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 18px;
+    padding: 10px 15px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 0.9em;
     color: var(--primary-blue);
     border-bottom: 1px solid var(--color-borders);
 }
@@ -59,9 +55,10 @@
 .dropdown-item {
     display: flex;
     align-items: center;
+    padding: 10px 15px;
     gap: 10px;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 0.9em;
     color: var(--texto-principal);
     transition: background 0.2s ease, color 0.2s ease;
     font-family: var(--font-principal);
@@ -83,12 +80,14 @@
     opacity: 0.85;
 }
 
-.user-icon{
+.user-icon {
     color: var(--primary-blue);
 }
+
 /* HOVER */
 .dropdown-item:hover {
-    background: rgba(80, 56, 237, 0.08); /* Versión suave del primary blue */
+    background: rgba(80, 56, 237, 0.08);
+    /* Versión suave del primary blue */
     color: var(--primary-blue);
     border-radius: 6px;
 

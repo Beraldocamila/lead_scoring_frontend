@@ -3,36 +3,20 @@ import "./userMenu.css";
 import { FiLogOut, FiEdit } from "react-icons/fi";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { TfiEmail } from "react-icons/tfi";
-import { LuMenu } from "react-icons/lu";
-import { RxCross1 } from "react-icons/rx";
+
 import { FaUser } from "react-icons/fa";
 
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 
-const UserMenu = () => {
-    const [isOpen, setIsOpen] = useState(false);
+const UserMenu = ({ isOpen, onClose }) => {
 
     const { user, logout } = useAuth(); //Obtenemos el nombre del usuario
+    if (!isOpen) return null;
 
     return (
         <div className="container-menu">
-            {/* BOTON DEL MENU */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="header-user-menu-button"
-            >
-                {isOpen ? (
-                    <RxCross1 className="menu-icon" />
-                ) : (
-                    <LuMenu className="menu-icon" />
-                )}
-            </button>
-
-            {/* DROPDOWN */}
-            {isOpen && (
                 <div className="dropdown-menu">
-                    
                     {/* HEADER DEL USUARIO */}
                     <div className="dropdown-item-header">
                         <FaUser className="dropdown-icon user-icon" />
@@ -65,7 +49,7 @@ const UserMenu = () => {
                         CERRAR SESIÓN
                     </Link>
                 </div>
-            )}
+        
         </div>
     );
 };

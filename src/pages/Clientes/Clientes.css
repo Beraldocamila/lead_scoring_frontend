@@ -31,8 +31,9 @@
     border: 1px solid var(--color-borders);
     border-radius: 8px;
     font-size: 14px;
-    background: var(--app-fondo);
+    background-color: var(--app-fondo);
     color: var(--texto-principal);
+
 }
 
 .busqueda {
