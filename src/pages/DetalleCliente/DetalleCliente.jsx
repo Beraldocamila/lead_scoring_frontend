@@ -5,7 +5,7 @@ import './detalleCliente.css';
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import Header from '../../components/Header/Header'
 // Íconos
-import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft } from 'react-icons/fa';
+import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft,FaRegCheckCircle } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
