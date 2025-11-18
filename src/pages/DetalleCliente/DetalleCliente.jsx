@@ -228,17 +228,18 @@ const DetalleCliente = () => {
 
                 <p className="seguros-subtitle">Basado en el análisis del perfil del cliente </p>
 
-                <div className="seguros-tags">
-                  {productos_recomendados.map((prod, i) => {
-                    const tipo = prod.charAt(0).toUpperCase() + prod.slice(1);
-                    const Icon = seguroIcons[tipo] || FaRegCheckCircle;
-                    return (
-                      <div key={i} className="seguro-tag seguro-tag--active">
-                        <Icon /> {tipo}
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="seguros-tags">
+                {productos_recomendados.map((prod, i) => {
+                  const tipo = prod.valor.charAt(0).toUpperCase() + prod.valor.slice(1);
+                  const Icon = seguroIcons[tipo] || FaRegCheckCircle;
+
+                  return (
+                    <div key={i} className="seguro-tag seguro-tag--active">
+                      <Icon /> {tipo}
+                    </div>
+                  );
+                })}
+              </div>
               </div>
             )}
 
@@ -289,7 +290,7 @@ const DetalleCliente = () => {
         clientDni={dni}
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
-        idProducto={productos_recomendados?.[0] ?? null}
+        idProducto={productos_recomendados?.[0].id ?? null}
       />
     </div>
   );
