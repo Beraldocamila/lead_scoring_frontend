@@ -293,11 +293,11 @@ const DetalleCliente = () => {
       <ModalCorreo
         isVisible={showMailModal}
         onClose={() => setShowMailModal(false)}
-        clientId ={features.id_persona}
+        clientId ={features.id}
         clientDni={dni}
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
-        idProducto={productos_recomendados?.[0].id ?? null}
+        idProducto={(productos_recomendados.length > 0 && productos_recomendados?.[0].id) ?? null}
       />
     </div>
   );
