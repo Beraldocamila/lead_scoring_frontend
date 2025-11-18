@@ -73,43 +73,47 @@ const Clientes = () => {
       <main className="clientes-main">
         {/* FILTROS */}
         <div className="filtros">
-          <input
-            type="text"
-            className="busqueda"
-            placeholder="Buscar por DNI o nombre..."
-            value={filtro}
-            onChange={(e) => {
-              setFiltro(e.target.value);
-              setPaginaActual(1);
-            }}
-          />
+          <div className="wrapper-busqueda">
+            <input
+              type="text"
+              className="busqueda"
+              placeholder="Buscar por DNI o nombre..."
+              value={filtro}
+              onChange={(e) => {
+                setFiltro(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </div>
 
+          <div className="wrapper-ordenar">
+            <select
+              className="ordenar"
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+            >
+              <option value="Nombre">Ordenar por: Nombre</option>
+              <option value="DNI">Ordenar por: DNI</option>
+            </select>
+          </div>
 
-        
-          <select
-            className="ordenar"
-            value={orden}
-            onChange={(e) => setOrden(e.target.value)}
-          >
-            <option value="Nombre">Ordenar por: Nombre</option>
-            <option value="DNI">Ordenar por: DNI</option>
-          </select>
-
-          <select
-            className="filtrar"
-            value={filtroProducto}
-            onChange={(e) => {
-              setFiltroProducto(e.target.value);
-              setPaginaActual(1);
-            }}
-          >
-            <option value="">Filtrar por: Producto</option>
-            {uniqueProducts.map((p, i) => (
-              <option key={i} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
+          <div className="wrapper-filtrar">
+            <select
+              className="filtrar"
+              value={filtroProducto}
+              onChange={(e) => {
+                setFiltroProducto(e.target.value);
+                setPaginaActual(1);
+              }}
+            >
+              <option value="">Filtrar por: Producto</option>
+              {uniqueProducts.map((p, i) => (
+                <option key={i} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* TABLA DE CLIENTES */}

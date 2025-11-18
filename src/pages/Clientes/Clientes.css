@@ -7,42 +7,44 @@
     display: flex;
     flex-direction: column;
     font-family: var(--font-principal);
+
 }
 
 /* MAIN */
 .clientes-main {
     padding: 32px;
     flex: 1;
+    margin: 0px 80px;
 }
 
 /* FILTROS */
 
 .filtros {
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+}
+
+.wrapper-busqueda,
+.wrapper-ordenar,
+.wrapper-filtrar {
+    flex: 1;
 }
 
 .busqueda,
 .ordenar,
 .filtrar {
+    width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--color-borders);
     border-radius: 8px;
     font-size: 14px;
     background-color: var(--app-fondo);
     color: var(--texto-principal);
-
-}
-
-.busqueda {
-    flex: 2;
-}
-
-.ordenar,
-.filtrar {
-    flex: 1;
+    box-sizing: border-box;
+    appearance: none;
 }
 
 /* TABLA */
@@ -79,21 +81,7 @@
     font-weight: 600;
 }
 
-/* Columnas */
-.clientes-tabla th:nth-child(1),
-.clientes-tabla td:nth-child(1) { width: 20%; }
 
-.clientes-tabla th:nth-child(2),
-.clientes-tabla td:nth-child(2) { width: 10%; }
-
-.clientes-tabla th:nth-child(3),
-.clientes-tabla td:nth-child(3) { width: 40%; }
-
-.clientes-tabla th:nth-child(4),
-.clientes-tabla td:nth-child(4) {
-    width: 5%;
-    text-align: center;
-}
 
 /* Botones de acción */
 .accion-boton {

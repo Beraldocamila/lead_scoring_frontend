@@ -175,6 +175,8 @@
     color: var(--color-gray-text);
     margin-bottom: 20px;
     font-weight: 400;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .seguros-antiguedad strong {
@@ -209,6 +211,68 @@
 /* Para Cuotas Impagas y Siniestros */
 .error-value {
     color: var(--score-rojo);
+}
+
+/* Coberturas */
+
+/* Bloque general */
+.polizas-detalle-list {
+    margin-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Título */
+.polizas-detalle-list h4 {
+    font-size: 0.9em;
+    color: var(--color-gray-text);
+    margin-bottom: 15px;
+    font-weight: 400;
+}
+
+/* Item estilo fila */
+.poliza-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    transition: all .2s ease;
+}
+
+/* Hover */
+.poliza-item:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* Chip del tipo de seguro */
+.poliza-chip {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    border-radius: 20px;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--primary-blue) 10%, white);
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+    margin-right: 15px;
+}
+
+/* Columna de textos */
+.poliza-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.85em;
+    color: var(--texto-principal);
+}
+
+/* Resaltar etiquetas */
+.poliza-info strong {
+    color: var(--texto-principal);
+    font-weight: 600;
 }
 
 /* Interacciones */
