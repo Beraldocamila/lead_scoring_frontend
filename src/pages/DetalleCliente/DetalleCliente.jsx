@@ -293,7 +293,7 @@ const DetalleCliente = () => {
       <ModalCorreo
         isVisible={showMailModal}
         onClose={() => setShowMailModal(false)}
-        clientId ={features.id}
+        clientId ={features.id_persona}
         clientDni={dni}
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
