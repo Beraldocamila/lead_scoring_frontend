@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import { FaRegUser } from "react-icons/fa6";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -17,10 +17,16 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     // Obtenemos la función login del AuthContext
-    const { login } = useAuth();
+    const { login, isLoggedIn } = useAuth();
 
     // Inicializo el hook de navegación
     const navigate = useNavigate();
+
+    useEffect(() => {
+    if (isLoggedIn) {
+        navigate('/clientes');
+    }
+}, [isLoggedIn, navigate]);
 
     // Función para manejar el cambio y la validación en tiempo real
     const handleInputChange = (setter, value, fieldName) => {

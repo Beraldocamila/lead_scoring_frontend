@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaRegUser } from "react-icons/fa6";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { MdOutlineMailOutline } from "react-icons/md";
-
+import NotificationToast from '../../components/NotificationToast/NotificationToast';
 import './register.css';
 import authService from '../../services/authService';
 import useAuth from '../../hooks/useAuth';
@@ -18,6 +18,7 @@ const Register = () => {
     const [clave, setClave] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState({visible: false, type: "success", message: ""});
 
     const { login } = useAuth(); // guardo el usuario logueado
     const navigate = useNavigate();
@@ -40,6 +41,14 @@ const Register = () => {
             }
         }
     };
+
+      const showToast = (type, message) => {
+  setToast({
+    visible: true,
+    type,
+    message
+  });
+};
 
 
     // const handleRegister = async (e) => {
@@ -95,8 +104,9 @@ const Register = () => {
             const data = await authService.register(username, clave, email);
             
             // REGISTRO EXITOSO
-            alert(`${data.message}.`);
-
+           
+            showToast("success", `${data.message}`);
+            setTimeout(()=>{},500);
             // Hace LOGIN automático usando AuthContext
             const loginResult = await login(username, clave);
 
@@ -190,6 +200,14 @@ const Register = () => {
                 <p className="link-to-register">
                     ¿Ya tenes una cuenta? <Link to="/">Inicia Sesión</Link>
                 </p>
+                
+      <NotificationToast
+          isVisible={toast.visible}
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast({ ...toast, visible: false })}
+      />
+
 
             </div>
 
@@ -199,6 +217,8 @@ const Register = () => {
                     <span className="login-logo-text">LOGO</span>
                 </div>
             </div>
+
+            
         </div>
     );
 };

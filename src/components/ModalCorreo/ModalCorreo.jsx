@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './modalCorreo.css';
 import api from "../../services/api";
+
 // URL base para la API de envío de correos
 // const API_MAIL_ENDPOINT = ; 
 
@@ -11,7 +12,7 @@ const steps = {
 };
 
 
-const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idProducto, onSendSuccess }) => {
+const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idProducto, onSendSuccess, showToast }) => {
 
     // primer modal en select_format para forzar la elección
     const [currentStep, setCurrentStep] = useState(steps.select_format); // primero inicia en "definir formato" despues puede cambiar a editar
@@ -21,6 +22,7 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     const [draftText, setDraftText] = useState('');
     const [error, setError] = useState(null);
     const [selectedFormat, setSelectedFormat] = useState(null); // almacena el formato elegido por el usuario
+
 
     // Reiniciamos el estado al abrir el modal, forzando el primer paso
     useEffect(() => {
@@ -41,6 +43,8 @@ const toneMap = {
   intermedio: "neutral",
   informal: "informal"
 };
+
+
     // Función que se llama al elegir un formato
 const handleFormatSelect = async (format) => {
     setSelectedFormat(format);
@@ -101,8 +105,8 @@ const handleSendMail = async () => {
     // El backend devuelve status, mensaje, id_correo_log
     onSendSuccess(response.data.mensaje);
 
-    alert(`Correo enviado con éxito a ${clientName}!`);
-
+    showToast("success", `Correo enviado con éxito a ${clientName}!`);
+    
     // Reset de estados
     setIsSending(false);
     onClose();
@@ -114,7 +118,7 @@ const handleSendMail = async () => {
     console.error("Error al enviar correo:", error);
 
     let errMsg = error?.response?.data?.detail || "Error desconocido";
-    alert("Error al enviar correo: " + errMsg);
+    showToast("error", "Error al enviar correo: " + errMsg);
 
     setIsSending(false);
   }
@@ -254,6 +258,7 @@ const handleSendMail = async () => {
                 }
 
             </div>
+
         </div>
     );
 };
