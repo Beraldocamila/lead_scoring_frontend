@@ -1,7 +1,4 @@
-/* ============================================= */
-/*        CONTENEDOR GENERAL DE LA PANTALLA      */
-/* ============================================= */
-
+/* CONTENEDOR GENERAL DE LA PANTALLA */
 .correos-container {
     background-color: var(--app-fondo);
     color: var(--texto-principal);
@@ -17,11 +14,7 @@
     flex: 1;
 }
 
-
-/* ============================================= */
-/*                  FILTROS                      */
-/* ============================================= */
-
+/* FILTROS */
 .filtros {
     display: flex;
     flex-wrap: wrap;
@@ -42,23 +35,82 @@
 }
 
 .busqueda {
-    flex: 2;
+    flex: 1;
+
 }
 
 .filtrar {
     flex: 1;
+
 }
 
 .busqueda:focus,
-.filtrar:focus {
+.filtrar:focus,
+.datepicker-wrapper input:focus {
     border-color: var(--primary-blue);
 }
 
+.datepicker-wrapper {
+    flex: 1;
+    box-sizing: border-box;
 
-/* ============================================= */
-/*                   TABLA                       */
-/* ============================================= */
+}
 
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+/* Estilo del input del DatePicker */
+.datepicker-wrapper .datepicker-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--color-borders);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--color-light-bg);
+    color: var(--texto-principal);
+    box-sizing: border-box;
+}
+
+/* Estilo del contenedor principal (para sombra, si quieres) */
+.react-datepicker-popper {
+    box-shadow: var(--sombra-card);
+}
+
+/* Estilo de los días seleccionados */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background-color: var(--primary-blue) !important;
+    color: white !important;
+    border-radius: 4px !important;
+}
+
+/* Estilo de hover en días */
+.react-datepicker__day:hover {
+    background-color: #dcd8ff !important;
+    border-radius: 4px !important;
+}
+
+/* Estilo para el label del checkbox */
+.mostrar-mios {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    font-weight: 500;
+    color: var(--primary-blue);
+    /* primary-blue */
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Estilo para el checkbox en sí */
+.mostrar-mios input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: var(--primary-blue);
+    cursor: pointer;
+}
+
+/*     TABLA  */
 .tabla-container {
     background: var(--app-fondo);
     border-radius: 12px;
@@ -95,23 +147,34 @@
 
 .correos-tabla th:nth-child(1),
 .correos-tabla td:nth-child(1) {
-  width: 30%; /* Destinatario */
+    width: 30%;
+    /* Destinatario */
 }
 
 .correos-tabla th:nth-child(2),
 .correos-tabla td:nth-child(2) {
-  width: 40%; /* Asunto */
+    width: 40%;
+    /* Asunto */
 }
 
 .correos-tabla th:nth-child(3),
 .correos-tabla td:nth-child(3) {
-  width: 20%; /* Fecha de envío */
+    width: 20%;
+    /* Fecha de envío */
 }
 
 .correos-tabla th:nth-child(4),
 .correos-tabla td:nth-child(4) {
-  width: 10%; /* Ver detalle */
-  text-align: center;
+    width: 10%;
+    /* Usuario */
+    text-align: center;
+}
+
+.correos-tabla th:nth-child(5),
+.correos-tabla td:nth-child(5) {
+    width: 10%;
+    /* Ver detalle */
+    text-align: center;
 }
 
 
@@ -129,11 +192,7 @@
     opacity: 0.7;
 }
 
-
-/* ============================================= */
-/*                PAGINACIÓN                     */
-/* ============================================= */
-
+/*  PAGINACIÓN*/
 .paginacion {
     display: flex;
     justify-content: space-between;

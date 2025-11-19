@@ -2,8 +2,9 @@ import "./Clientes.css";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import api from "../../services/api"; // 👈 conexión con el backend
+import api from "../../services/api"; // conexión con el backend
 import Header from '../../components/Header/Header'
+import LoadingSpinner from "../../components/Spinner/Spinner";
 
 const Clientes = () => {
   const [clients, setClients] = useState([]); // clientes desde el backend
@@ -17,7 +18,7 @@ const Clientes = () => {
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // ✅ Trae los clientes del backend (ya incluye productos)
+  // Trae los clientes del backend (ya incluye productos)
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -32,8 +33,8 @@ const Clientes = () => {
     };
     fetchClients();
   }, []);
-
-  if (loading) return <p>Cargando clientes...</p>;
+  // SPINNER MIENTRAS CARGA
+  if (loading) return <LoadingSpinner text="Cargando clientes." />;
   if (error) return <p>{error}</p>;
 
   // Obtener productos únicos para el filtro dinámico
@@ -72,41 +73,47 @@ const Clientes = () => {
       <main className="clientes-main">
         {/* FILTROS */}
         <div className="filtros">
-          <input
-            type="text"
-            className="busqueda"
-            placeholder="Buscar por DNI o nombre..."
-            value={filtro}
-            onChange={(e) => {
-              setFiltro(e.target.value);
-              setPaginaActual(1);
-            }}
-          />
+          <div className="wrapper-busqueda">
+            <input
+              type="text"
+              className="busqueda"
+              placeholder="Buscar por DNI o nombre..."
+              value={filtro}
+              onChange={(e) => {
+                setFiltro(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </div>
 
-          <select
-            className="ordenar"
-            value={orden}
-            onChange={(e) => setOrden(e.target.value)}
-          >
-            <option value="Nombre">Ordenar por: Nombre</option>
-            <option value="DNI">Ordenar por: DNI</option>
-          </select>
+          <div className="wrapper-ordenar">
+            <select
+              className="ordenar"
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+            >
+              <option value="Nombre">Ordenar por: Nombre</option>
+              <option value="DNI">Ordenar por: DNI</option>
+            </select>
+          </div>
 
-          <select
-            className="filtrar"
-            value={filtroProducto}
-            onChange={(e) => {
-              setFiltroProducto(e.target.value);
-              setPaginaActual(1);
-            }}
-          >
-            <option value="">Filtrar por: Producto</option>
-            {uniqueProducts.map((p, i) => (
-              <option key={i} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
+          <div className="wrapper-filtrar">
+            <select
+              className="filtrar"
+              value={filtroProducto}
+              onChange={(e) => {
+                setFiltroProducto(e.target.value);
+                setPaginaActual(1);
+              }}
+            >
+              <option value="">Filtrar por: Producto</option>
+              {uniqueProducts.map((p, i) => (
+                <option key={i} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* TABLA DE CLIENTES */}
@@ -164,16 +171,16 @@ const Clientes = () => {
               </button>
             ))}
 
-        <button
-          onClick={() =>
-            setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
-          }
-          disabled={paginaActual === totalPaginas}
-        >
-          {">"}
-        </button>
-      </div>
-    </div>
+            <button
+              onClick={() =>
+                setPaginaActual(prev => Math.min(prev + 1, totalPaginas))
+              }
+              disabled={paginaActual === totalPaginas}
+            >
+              {">"}
+            </button>
+          </div>
+        </div>
 
       </main>
     </div>

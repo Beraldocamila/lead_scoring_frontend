@@ -1,110 +1,34 @@
-
-/* 0 - VARIABLES DE DISEÑO (Base) */
-
 :root {
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
 
-/* Base del Componente */
-.page-container {
-    background-color: var(--app-fondo);
-    font-family: var(--font-principal);
-    color: var(--texto-principal);
-    min-height: 100vh;
+/* SPINNER */
+.spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+    /* Opcional */
+    background-color: rgba(255, 255, 255, 0.6);
+    /* Fondo suave */
+    z-index: 9999;
 }
 
-
-
-/* 1 - HEADER */
-
-.header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding: 16px 32px;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #f9fafb;
-}
-
-
-/* Logo de la Aplicación (LeadScoring) */
-.logo-section {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 700;
+.spinner p {
+    margin-top: 16px;
     font-size: 1.2rem;
     color: var(--primary-blue);
+    /* tu color */
+    font-weight: 500;
 }
 
-.logo-text {
-    font-size: 1.2rem;
-    margin: 0;
-}
-
-/* Título de la Página (Detalle Cliente: Nombre) */
-.page-title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-left: 30px;
-}
-
-.header-page-title {
-    font-size: 30px;
-    font-weight: 600;
-    color: var(--primary-blue);
-    margin: 0;
-}
-
-/* MENÚ DE USUARIO (Alineación)*/
-.container-menu {
-    position: relative;
-}
-
-.header-user-menu-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: var(--primary-blue)
-}
-
-.container-menu-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
-.dropdown-menu {
-    position: absolute;
-    right: 0;
-    top: 50px;
-    background-color: white;
-    box-shadow: var(--sombra-card);
-    border-radius: 8px;
-    z-index: 10;
-    min-width: 250px;
-    padding: 10px 0;
-}
-
-.dropdown-item-header,
-.dropdown-item {
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: var(--texto-principal);
-    font-size: 0.9em;
-}
-
-
-/* 2 - CUERPO DE LA PÁGINA (BODY) */
-
+/* CUERPO DE LA PÁGINA (BODY) */
 
 .column-layout {
     display: grid;
@@ -251,6 +175,8 @@
     color: var(--color-gray-text);
     margin-bottom: 20px;
     font-weight: 400;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .seguros-antiguedad strong {
@@ -285,6 +211,68 @@
 /* Para Cuotas Impagas y Siniestros */
 .error-value {
     color: var(--score-rojo);
+}
+
+/* Coberturas */
+
+/* Bloque general */
+.polizas-detalle-list {
+    margin-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Título */
+.polizas-detalle-list h4 {
+    font-size: 0.9em;
+    color: var(--color-gray-text);
+    margin-bottom: 15px;
+    font-weight: 400;
+}
+
+/* Item estilo fila */
+.poliza-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    transition: all .2s ease;
+}
+
+/* Hover */
+.poliza-item:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+/* Chip del tipo de seguro */
+.poliza-chip {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    border-radius: 20px;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--primary-blue) 10%, white);
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+    margin-right: 15px;
+}
+
+/* Columna de textos */
+.poliza-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.85em;
+    color: var(--texto-principal);
+}
+
+/* Resaltar etiquetas */
+.poliza-info strong {
+    color: var(--texto-principal);
+    font-weight: 600;
 }
 
 /* Interacciones */
@@ -429,17 +417,16 @@
     justify-content: center;
     background-color: var(--primary-blue);
     color: white;
-    padding: 12px;
+    padding: 8px 10px;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease, border-radius 0.3s ease;
-    z-index: 1000;
+
 }
 
 .return-icon {
-    font-size: 1.3rem;
-    flex-shrink: 0;
+    font-size: 1rem;
     color: white;
 }
 
@@ -448,15 +435,15 @@
     opacity: 0;
     max-width: 0;
     transition: all 0.3s ease;
-    font-weight: 500;
+    font-weight: 200;
     font-size: 1.1rem;
 }
 
 /* Hover: Aparicion de texto y cambia forma*/
 .fixed-return-button:hover {
     border-radius: 50px;
-    padding: 12px 25px;
-    background-color: #3b2a95;
+    padding: 8px 25px;
+    background-color: var(--primary-blue);
     gap: 10px;
 }
 
