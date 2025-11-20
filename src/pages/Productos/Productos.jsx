@@ -32,6 +32,7 @@ const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [processingAction, setProcessingAction] = useState(false);
+    const [availablePolizas, setAvailablePolizas] = useState([]);
 
     // Estados para filtrado y paginacion
     const [searchTerm, setSearchTerm] = useState('');
@@ -108,6 +109,25 @@ const Productos = () => {
 
         return result;
     }, [productos, searchTerm, filterType, sortBy]);
+
+    // Aplique el filtro para que sea similar al de CorreosEnviados
+    useEffect(() => {
+    const fetchPolizas = async () => {
+      try {
+        const response = await api.get("/productos");
+
+        // Obtener productos únicos para el filtro dinámico
+        const uniqueTypes = Array.from(new Set(
+          response.data.map(p => p.tipo_producto || [])
+        ));
+
+        setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
+      } catch (err) {
+        console.error("Error al obtener productos:", err);
+      }
+    };
+    fetchPolizas();
+  }, []);
 
     const totalPages = Math.ceil(productosProcesados.length / itemsPerPage);
     const paginatedProducts = productosProcesados.slice(
@@ -203,10 +223,11 @@ const Productos = () => {
                             className="filter-select"
                         >
                             <option value="Todos">Todos los Tipos</option>
-                            <option value="Auto">Auto</option>
-                            <option value="Hogar">Hogar</option>
-                            <option value="Vida">Vida</option>
-                            <option value="Salud">Salud</option>
+                            {availablePolizas.map((p, i) => (
+                                <option key={i} value={p}>
+                                    {p}
+                                </option>
+                            ))}
                         </select>
 
                         <select 
