@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaRegUser } from "react-icons/fa6";
 import { RiLockPasswordLine } from "react-icons/ri";
 
@@ -8,6 +8,9 @@ import './login.css';
 
 // Constante para el límite de caracteres
 const MAX_LENGTH = 20;
+// Constantes para el bloqueo por intentos fallidos
+const MAX_ATTEMPTS = 3; // Límite de intentos
+const LOCK_TIME_MS = 60000; // Tiempo de bloqueo en milisegundos (60 segundos)
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -16,6 +19,17 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // NUEVOS ESTADOS PARA EL BLOQUEO 
+    const [failCount, setFailCount] = useState(0);
+    const [isLocked, setIsLocked] = useState(false);
+    // Estado para el tiempo restante del bloqueo
+    const [lockTimeRemaining, setLockTimeRemaining] = useState(0);
+
+    // Referencia para limpiar el timer del bloqueo si el componente se desmonta
+    const lockTimerRef = useRef(null);
+    // Referencia para el timer del contador de tiempo restante
+    const countdownTimerRef = useRef(null);
+
     // Obtenemos la función login del AuthContext
     const { login, isLoggedIn } = useAuth();
 
@@ -23,10 +37,36 @@ const Login = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-    if (isLoggedIn) {
-        navigate('/clientes');
-    }
-}, [isLoggedIn, navigate]);
+        if (isLoggedIn) {
+            navigate('/clientes');
+        }
+    }, [isLoggedIn, navigate]);
+
+    // Effect para manejar el contador de tiempo restante del bloqueo
+    useEffect(() => {
+        // Si el bloqueo está activo, iniciar la cuenta regresiva
+        if (isLocked) {
+            // Inicializar el tiempo restante
+            setLockTimeRemaining(LOCK_TIME_MS / 1000);
+
+            // Configurar el contador de 1 segundo
+            countdownTimerRef.current = setInterval(() => {
+                setLockTimeRemaining(prevTime => {
+                    if (prevTime <= 1) {
+                        clearInterval(countdownTimerRef.current); // Detener el contador
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        }
+
+        // Función de limpieza para borrar ambos timers
+        return () => {
+            if (lockTimerRef.current) clearTimeout(lockTimerRef.current);
+            if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+        };
+    }, [isLocked]);
 
     // Función para manejar el cambio y la validación en tiempo real
     const handleInputChange = (setter, value, fieldName) => {
@@ -36,7 +76,7 @@ const Login = () => {
         if (value.length > MAX_LENGTH) {
             // Muestra el error de longitud inmediatamente
             setError(`Error: El campo "${fieldName}" no puede tener más de ${MAX_LENGTH} caracteres.`);
-        } 
+        }
         // Si el valor vuelve a ser válido (longitud <= MAX_LENGTH) y hay un error de longitud activo, lo borra.
         // Lo verificamos si el error comienza con 'Error:' para no borrar errores de campos vacíos o de servidor.
         else if (error && error.startsWith('Error:')) {
@@ -44,9 +84,31 @@ const Login = () => {
         }
     };
 
+    // NUEVA FUNCIÓN para manejar el bloqueo
+    const startLockdown = () => {
+        setIsLocked(true);
+        // Establece el mensaje de error de bloqueo
+        setError(`Demasiados intentos fallidos. Por favor, espera ${LOCK_TIME_MS / 1000} segundos.`);
+
+        // Configura un timer para levantar el bloqueo
+        lockTimerRef.current = setTimeout(() => {
+            setIsLocked(false);
+            setFailCount(0); // Resetea el contador de fallos
+            setError(''); // Limpia el mensaje de error
+            // También se borra el timer del countdown en el useEffect de limpieza
+        }, LOCK_TIME_MS);
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+
+        // VALIDACIÓN: Si está bloqueado, salir y no procesar
+        if (isLocked) {
+            setError(`Tu cuenta está bloqueada temporalmente. Intenta de nuevo en ${lockTimeRemaining} segundos.`);
+            return;
+        }
+
         setLoading(true);
 
         // VALIDACIÓN LOCAL: Verificar campos vacíos
@@ -68,18 +130,44 @@ const Login = () => {
         const result = await login(username, clave);
 
         if (result.success) {
-            // Si el login es exitoso, navegamos a la página principal de clientes
+            // Si el login es exitoso, navegamos a la página principal de clientes y reinicia el contador
+            setFailCount(0);
             navigate('/clientes');
         } else {
-            // Si el login falla, el AuthContext devuelve el mensaje de error del backend.
-            setError(result.error);
+            // FALLO: Actualizar el contador de fallos
+            setFailCount(prevCount => {
+                const newCount = prevCount + 1;
+
+                // Si el nuevo contador llega al límite, activar el bloqueo
+                if (newCount >= MAX_ATTEMPTS) {
+                    startLockdown();
+                }
+
+                // Si no está bloqueado, mostrar el error del backend
+                if (!isLocked) {
+                    setError(result.error);
+                }
+
+                return newCount;
+            });
+
+            // Mostrar el error del backend si no se activó el bloqueo en el setFailCount
+            if (failCount + 1 < MAX_ATTEMPTS && !isLocked) {
+                setError(result.error);
+            }
         }
 
         setLoading(false); // Siempre termina el estado de carga
     };
 
-    // La lógica para deshabilitar el botón si la longitud es inválida
+    // La lógica para deshabilitar el botón
     const isLengthInvalid = username.length > MAX_LENGTH || clave.length > MAX_LENGTH;
+    // 🔒 NUEVA CONDICIÓN para deshabilitar el botón si está bloqueado
+    const isButtonDisabled = loading || isLengthInvalid || isLocked; 
+    
+    // Mensaje para el contador de intentos fallidos
+    const attemptsMessage = !isLocked && failCount > 0 ? 
+        `Intentos restantes: ${MAX_ATTEMPTS - failCount}` : '';
 
     return (
         <div className="login-page-container">
@@ -98,6 +186,8 @@ const Login = () => {
                             required
                             aria-label="Username"
                             className="login-input"
+                            // Deshabilitar si está bloqueado
+                            disabled={isLocked}
                         />
                     </div>
                     <div className="input-group">
@@ -111,17 +201,25 @@ const Login = () => {
                             required
                             aria-label="Password"
                             className="login-input"
+                            // Deshabilitar si está bloqueado
+                            disabled={isLocked}
                         />
                     </div>
-                    {/* Muestra el mensaje de error */}
-                    {error && <p className="error-message">{error}</p>}
+                    {/* Muestra el mensaje de error/bloqueo */}
+                    {error && <p className={`error-message ${isLocked ? 'locked-error' : ''}`}>{error}</p>}
+                    
+                    {/* Mensaje de intentos restantes */}
+                    {attemptsMessage && !isLocked && (
+                        <p className="attempts-message">{attemptsMessage}</p>
+                    )}
+                    
                     <button 
                         type="submit" 
                         className="login-button" 
-                        // Deshabilitado si está cargando O si la longitud es inválida
-                        disabled={loading || isLengthInvalid}
+                        // Deshabilitado si está cargando, si la longitud es inválida O si está bloqueado
+                        disabled={isButtonDisabled}
                     >
-                        {loading ? 'Iniciando Sesión...' : 'Iniciar Sesión'}
+                        {isLocked ? `Bloqueado (${lockTimeRemaining}s)` : (loading ? 'Iniciando Sesión...' : 'Iniciar Sesión')}
                     </button>
                 </form>
 
