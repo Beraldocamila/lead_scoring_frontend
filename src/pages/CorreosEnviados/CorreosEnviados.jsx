@@ -19,6 +19,7 @@ const CorreosEnviados = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [availablePolizas, setAvailablePolizas] = useState([]);
   const [filtroDni, setFiltroDni] = useState("");
   const [filtroMail, setFiltroMail] = useState("");
   const [filtroPoliza, setFiltroPoliza] = useState("");
@@ -45,6 +46,24 @@ const CorreosEnviados = () => {
       }
     };
     fetchCorreos();
+  }, []);
+
+  useEffect(() => {
+    const fetchPolizas = async () => {
+      try {
+        const response = await api.get("/productos");
+
+        // Obtener productos únicos para el filtro dinámico
+        const uniqueTypes = Array.from(new Set(
+          response.data.map(p => p.tipo_producto || [])
+        ));
+
+        setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
+      } catch (err) {
+        console.error("Error al obtener productos:", err);
+      }
+    };
+    fetchPolizas();
   }, []);
 
   if (loading) return <LoadingSpinner text="Cargando correos..." />;
@@ -136,10 +155,11 @@ const CorreosEnviados = () => {
             }}
           >
             <option value="">Filtrar por: Póliza</option>
-            <option value="auto">Auto</option>
-            <option value="hogar">Hogar</option>
-            <option value="vida">Vida</option>
-            <option value="salud">Salud</option>
+            {availablePolizas.map((p, i) => (
+              <option key={i} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
 
           <label className="mostrar-mios">
