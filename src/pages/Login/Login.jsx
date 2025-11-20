@@ -162,7 +162,7 @@ const Login = () => {
 
     // La lógica para deshabilitar el botón
     const isLengthInvalid = username.length > MAX_LENGTH || clave.length > MAX_LENGTH;
-    // 🔒 NUEVA CONDICIÓN para deshabilitar el botón si está bloqueado
+    // NUEVA CONDICIÓN para deshabilitar el botón si está bloqueado
     const isButtonDisabled = loading || isLengthInvalid || isLocked; 
     
     // Mensaje para el contador de intentos fallidos
