@@ -9,25 +9,37 @@
     flex-direction: column; /* spinner arriba, texto abajo */
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    z-index: 9999;
+    
+    /* Para modo claro */
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px); /* Efecto borroso moderno */
+    transition: background-color 0.3s ease;
 }
 
-/* Spinner creado con CSS (sin bootstrap) */
+/* Para modo oscuro */
+body.dark-mode .container-spinner {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Spinner */
 .spinner-circle {
     width: 3.5rem;
     height: 3.5rem;
     border: 5px solid var(--primary-blue);
-    border-top-color: white;
+    border-top-color: transparent; 
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 
 /* Texto */
 .container-spinner p {
-    margin-top: 16px;
-    font-size: 1.2rem;
+    margin: 0;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--primary-blue);
+    letter-spacing: 0.5px;
 }
 
 /* Animación */
