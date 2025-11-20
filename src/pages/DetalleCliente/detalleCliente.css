@@ -492,3 +492,34 @@ body.dark-mode .spinner {
         flex-direction: column;
     }
 }
+
+.btn-view-interaction {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--color-gray-text);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.btn-view-interaction:hover {
+    background-color: rgba(80, 56, 237, 0.1);
+    color: var(--primary-blue);
+}
+
+.btn-view-interaction svg {
+    font-size: 1.1rem;
+}
+
+.interaccion-item {
+    width: 100%; 
+}
+
+.interaccion-text {
+    flex: 1;
+}

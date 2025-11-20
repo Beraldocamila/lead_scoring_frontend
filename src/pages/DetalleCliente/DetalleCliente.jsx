@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import './detalleCliente.css';
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
+import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo'
 import Header from '../../components/Header/Header'
 import NotificationToast from '../../components/NotificationToast/NotificationToast';
 // Íconos
-import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft,FaRegCheckCircle } from 'react-icons/fa';
+import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft,FaRegCheckCircle, FaRegEye } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
@@ -19,7 +20,7 @@ import { RiBarChartFill } from "react-icons/ri";
 import LoadingSpinner from '../../components/Spinner/Spinner';
 
 // Componente para mostrar un item de perfil
-const ProfileItem = ({ icon: Icon, title, value }) => (
+const ProfileItem = ({ icon: Icon, title, value }) => ( 
   <div className="profile-item">
     <div className="profile-icon-wrapper">
       <Icon className="profile-icon" />
@@ -43,6 +44,21 @@ const DetalleCliente = () => {
 
   const [toast, setToast] = useState({visible: false, type: "success", message: ""});
 
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [emailToView, setEmailToView] = useState(null);
+
+  const handleViewEmail = (interaccion) => {
+    if (interaccion.fullData) {
+      setEmailToView(interaccion.fullData);
+      setIsViewModalVisible(true);
+    }
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalVisible(false);
+    setEmailToView(null);
+  };
+
   const handleSendSuccess = (mailBody) => {
     const newInteraction = {
       tipo: "Mail Enviado",
@@ -56,22 +72,49 @@ const DetalleCliente = () => {
     const fetchClientData = async () => {
       try {
         const response = await api.get(`/predict/${dni}`);
-        setClient(response.data);
+        const dataCliente = response.data;
 
-        setInteracciones([
-          {
-            tipo: "Mail Enviado",
-            descripcion: "Propuesta Seguro de Salud",
-            fecha: "1 de Julio 2024"
-          }
-        ]);
+        setClient(dataCliente);
+        const idPersona = dataCliente.features.id; 
+
+        if (idPersona) {
+            try {
+                const historialResponse = await api.get(`/correos/historial/persona/${idPersona}`);
+                
+                const historialFormateado = historialResponse.data.map(mail => ({
+                    tipo: "Mail Enviado",
+                    descripcion: mail.asunto || "Sin asunto",
+                    fecha: new Date(mail.fecha_envio || mail.fecha_creacion).toLocaleDateString('es-AR'),
+
+                    fullData: {
+                      mail: mail.mail || dataCliente.features.email,
+                      asunto: mail.asunto,
+                      usuario: mail.id_usuario.username,
+                      fecha_envio: new Date(mail.fecha_envio || mail.fecha_creacion).toLocaleDateString('es-AR'),
+                      cuerpo: mail.cuerpo
+                    }
+
+                }));
+
+                setInteracciones(historialFormateado);
+            } catch (errHistorial) {
+                console.warn("No se pudo obtener el historial:", errHistorial);
+                setInteracciones([]);
+            }
+        } else {
+            console.warn("No se encontró ID de persona en la respuesta del predict");
+        }
+
       } catch (error) {
         console.error("Error al obtener datos del cliente:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchClientData();
+
+    if (dni) {
+      fetchClientData();
+    }
   }, [dni]);
 
   const showToast = (type, message) => {
@@ -208,6 +251,17 @@ const DetalleCliente = () => {
                       </p>
                       <span className="interaccion-date">{interaccion.fecha}</span>
                     </div>
+
+                  {interaccion.fullData && (
+                        <button 
+                            className="btn-view-interaction" 
+                            onClick={() => handleViewEmail(interaccion)}
+                            title="Ver correo completo"
+                        >
+                            <FaRegEye />
+                        </button>
+                    )}
+
                   </div>
                 ))
               ) : (
@@ -312,6 +366,12 @@ const DetalleCliente = () => {
         onSendSuccess={handleSendSuccess}
         idProducto={(productos_recomendados.length > 0 && productos_recomendados?.[0].id) ?? null}
         showToast= {showToast}
+      />
+
+      <ModalVistaCorreo
+        isVisible={isViewModalVisible}
+        emailData={emailToView}
+        onClose={handleCloseViewModal}
       />
 
       <NotificationToast
