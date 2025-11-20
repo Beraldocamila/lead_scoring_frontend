@@ -1,31 +1,54 @@
 /* VARIABLES GLOBALES */
-
 :root {
-    /* Colores principales */
+    /* Colores de marca */
     --primary-blue: #5038ED;
     --score-verde: #2FA86F;
     --score-naranja: #F97316;
     --score-rojo: #EF4444;
 
-    /* Background y texto */
-    --app-fondo: #FFFFFF;
-    --texto-principal: #000000;
+    /* Modo claro */
+    
+    /* Fondos */
+    --app-fondo: #F3F4F6;       /* Gris muy suave para el fondo de la pantalla */
+    --bg-card: #FFFFFF;         /* BLANCO: Para Tarjetas, Modales, Sidebars */
+    --bg-input: #FFFFFF;        /* BLANCO: Para Inputs y Selects */
+    
+    /* Textos */
+    --texto-principal: #111827; /* Negro suave (mejor que #000000 para lectura) */
+    --color-gray-text: #6b7280; /* Gris para textos secundarios */
+    
+    /* Elementos UI */
+    --color-borders: #d1d5db;   /* Gris claro para bordes */
+    --color-light-bg: #e5e7eb;  /* Gris para estados Hover o fondos secundarios */
+    --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 
     /* Tipografía */
     --font-principal: 'Poppins', sans-serif;
-
-    /* Grises */
-    --color-gray-text: #6b7280;
-    --color-light-bg: #e9e9ea;
-
-    /* Sombra */
-    --sombra-card: 0 8px 30px rgba(0, 0, 0, 0.2);
-
-    /* Borde */
-    --color-borders: #c9c9c9;
 }
 
-/* RESET BÁSICO */
+/* Modo Oscuro */
+/* NOTA: Se recuerda que cuando el body tenga la clase "dark-mode", estas variables cambian su valor */
+
+body.dark-mode {
+    /* Ajuste de color primario: es un poco mas luminoso para fondo oscuro */
+    --primary-blue: #6366f1; 
+
+    /* Fondos Oscuros */
+    --app-fondo: #111827;      /* Fondo muy oscuro (Tirando a negro azulado) */
+    --bg-card: #1F2937;        /* Gris oscuro para tarjetas (destaca sobre el fondo) */
+    --bg-input: #374151;       /* Gris medio para inputs (para que se note el borde) */
+    
+    /* Textos Claros */
+    --texto-principal: #F9FAFB; /* Blanco casi puro */
+    --color-gray-text: #9CA3AF; /* Gris claro */
+
+    /* Elementos UI Oscuros */
+    --color-borders: #374151;   /* Borde gris oscuro */
+    --color-light-bg: #374151;  /* Hover oscuro */
+    --sombra-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5); /* Sombra más intensa y oscura */
+}
+
+/* Estilos base */
 
 body, h1, h2, h3, p, ul, li {
     margin: 0;
@@ -33,13 +56,11 @@ body, h1, h2, h3, p, ul, li {
     box-sizing: border-box;
 }
 
-
-/* ESTILOS BASE DEL SITIO */
-
 body {
     font-family: var(--font-principal);
     background-color: var(--app-fondo);
     color: var(--texto-principal);
+    
+    /* Breve transicion para que el cambio de color sea suave y no un parpadeo brusco */
+    transition: background-color 0.3s ease, color 0.3s ease; 
 }
-
-

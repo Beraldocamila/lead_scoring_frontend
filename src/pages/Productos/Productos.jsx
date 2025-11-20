@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FiEdit, FiTrash2, FiPlus, FiX, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX } from 'react-icons/fi';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
 import { FaRegHeart, FaArrowLeft } from 'react-icons/fa';
 import { MdOutlineHealthAndSafety } from 'react-icons/md';
@@ -7,9 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import api from '../../services/api';
 import NotificationToast from '../../components/NotificationToast/NotificationToast'; 
+import ModalProductos from '../../components/ModalProductos/ModalProductos';
 import './productos.css';
 
-// Pruebas sugeridas con componente Skeleton para carga
+// Skeleton para carga
 const ProductSkeleton = () => (
     <div className="producto-card skeleton-card">
         <div className="skeleton-header">
@@ -31,28 +32,20 @@ const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [processingAction, setProcessingAction] = useState(false);
+    const [availablePolizas, setAvailablePolizas] = useState([]);
 
     // Estados para filtrado y paginacion
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('Todos');
-    const [sortBy, setSortBy] = useState('nombre_asc'); // Opciones: nombre_asc, nombre_desc, prima_asc, prima_desc
+    const [sortBy, setSortBy] = useState('nombre_asc'); 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12; // Cantidad de tarjetas por pagina
+    const itemsPerPage = 12; 
 
-    // Estados para modal y formulario
+    // Estado para modal (Ahora simplificado)
     const [modalAbierto, setModalAbierto] = useState(false);
     const [productoEditando, setProductoEditando] = useState(null);
-    const [formData, setFormData] = useState({
-        nombre: '',
-        tipo_producto: 'Auto',
-        coberturas_incluidas: '',
-        prima_base: ''
-    });
-    
-    // Estado para validacion visual ("touched" indica si el usuario ya interactuo con el campo)
-    const [touchedFields, setTouchedFields] = useState({});
 
-    // Estados de UI (Notificaciones y confirmaciones)
+    // Estados de UI 
     const [notification, setNotification] = useState({ isVisible: false, type: 'success', message: '' });
     const [confirmDelete, setConfirmDelete] = useState({ isVisible: false, productoId: null, productoNombre: '' });
 
@@ -63,12 +56,11 @@ const Productos = () => {
         Salud: MdOutlineHealthAndSafety
     };
 
-    // Carga inicial de datos
+    // Carga inicial
     useEffect(() => {
         fetchProductos();
     }, []);
 
-    // Resetear a la pagina 1 cuando cambian los filtros para evitar quedar en una pagina vacia
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filterType, sortBy]);
@@ -80,7 +72,7 @@ const Productos = () => {
             setProductos(response.data);
         } catch (error) {
             console.error('Error al cargar:', error);
-            showToast('error', 'Error al cargar los productos. Intente nuevamente.');
+            showToast('error', 'Error al cargar los productos.');
         } finally {
             setLoading(false);
         }
@@ -90,11 +82,9 @@ const Productos = () => {
         setNotification({ isVisible: true, type, message });
     };
 
-    // Logica de Filtrado y Ordenamiento (Optimizada con useMemo)
     const productosProcesados = useMemo(() => {
         let result = [...productos];
 
-        // Filtro por busqueda (Nombre o Coberturas)
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             result = result.filter(p => 
@@ -103,12 +93,10 @@ const Productos = () => {
             );
         }
 
-        // Filtro por tipo de producto
         if (filterType !== 'Todos') {
             result = result.filter(p => p.tipo_producto === filterType);
         }
 
-        // Forma de ordenamiento
         result.sort((a, b) => {
             switch (sortBy) {
                 case 'nombre_asc': return a.nombre.localeCompare(b.nombre);
@@ -122,7 +110,25 @@ const Productos = () => {
         return result;
     }, [productos, searchTerm, filterType, sortBy]);
 
-    // Logica de paginacion
+    // Aplique el filtro para que sea similar al de CorreosEnviados
+    useEffect(() => {
+    const fetchPolizas = async () => {
+      try {
+        const response = await api.get("/productos");
+
+        // Obtener productos únicos para el filtro dinámico
+        const uniqueTypes = Array.from(new Set(
+          response.data.map(p => p.tipo_producto || [])
+        ));
+
+        setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
+      } catch (err) {
+        console.error("Error al obtener productos:", err);
+      }
+    };
+    fetchPolizas();
+  }, []);
+
     const totalPages = Math.ceil(productosProcesados.length / itemsPerPage);
     const paginatedProducts = productosProcesados.slice(
         (currentPage - 1) * itemsPerPage,
@@ -133,51 +139,18 @@ const Productos = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const totalItems = productosProcesados.length;
 
-    // Manejo de formulario
     const abrirModalNuevo = () => {
         setProductoEditando(null);
-        setFormData({ nombre: '', tipo_producto: 'Auto', coberturas_incluidas: '', prima_base: '' });
-        setTouchedFields({}); // Reseteamos validaciones visuales
         setModalAbierto(true);
     };
 
     const abrirModalEditar = (producto) => {
         setProductoEditando(producto);
-        setFormData({
-            nombre: producto.nombre,
-            tipo_producto: producto.tipo_producto,
-            coberturas_incluidas: producto.coberturas_incluidas || '',
-            prima_base: producto.prima_base || ''
-        });
-        setTouchedFields({});
         setModalAbierto(true);
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Marca el campo como "tocado" cuando el usuario sale del input (onBlur)
-    const handleBlur = (e) => {
-        const { name } = e.target;
-        setTouchedFields(prev => ({ ...prev, [name]: true }));
-    };
-
-    // Verifica si un campo es invalido para mostrar borde rojo
-    const isFieldInvalid = (name) => {
-        return touchedFields[name] && !formData[name];
-    };
-
-    const handleSubmit = async () => {
-        // Validar todos los campos al intentar enviar (simula que el usuario tocó todo)
-        setTouchedFields({ nombre: true, coberturas_incluidas: true, prima_base: true });
-
-        if (!formData.nombre || !formData.coberturas_incluidas || !formData.prima_base) {
-            showToast('error', 'Por favor completa todos los campos requeridos');
-            return;
-        }
-
+    // Aca se maneja el guardado (recibe datos del modal)
+    const handleSaveProduct = async (formData) => {
         try {
             setProcessingAction(true);
             const dataToSend = { ...formData, prima_base: Number(formData.prima_base) };
@@ -221,7 +194,6 @@ const Productos = () => {
 
     return (
         <div className="productos-container">
-            {/* Notificaciones Toast*/}
             <NotificationToast 
                 isVisible={notification.isVisible}
                 type={notification.type}
@@ -229,11 +201,9 @@ const Productos = () => {
                 onClose={() => setNotification({ ...notification, isVisible: false })}
             />
 
-            {/* HEADER */}
             <Header title="GESTIÓN DE PRODUCTOS" />
 
             <main className="productos-main">
-                {/* BARRA DE HERRAMIENTAS: Busqueda, filtros y boton */}
                 <div className="toolbar-container">
                     <div className="search-wrapper">
                         <FiSearch className="search-icon" />
@@ -247,20 +217,19 @@ const Productos = () => {
                     </div>
                     
                     <div className="filters-wrapper">
-                        {/* Filtro por tipo */}
                         <select 
                             value={filterType} 
                             onChange={(e) => setFilterType(e.target.value)}
                             className="filter-select"
                         >
                             <option value="Todos">Todos los Tipos</option>
-                            <option value="Auto">Auto</option>
-                            <option value="Hogar">Hogar</option>
-                            <option value="Vida">Vida</option>
-                            <option value="Salud">Salud</option>
+                            {availablePolizas.map((p, i) => (
+                                <option key={i} value={p}>
+                                    {p}
+                                </option>
+                            ))}
                         </select>
 
-                        {/* Filtro de ordenamiento */}
                         <select 
                             value={sortBy} 
                             onChange={(e) => setSortBy(e.target.value)}
@@ -278,10 +247,8 @@ const Productos = () => {
                     </div>
                 </div>
 
-                {/* GRID DE PRODUCTOS */}
                 <div className="productos-grid">
                     {loading ? (
-                        // Mostramos Skeletons mientras carga
                         [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
                     ) : paginatedProducts.length > 0 ? (
                         paginatedProducts.map(producto => {
@@ -332,7 +299,6 @@ const Productos = () => {
                     )}
                 </div>
 
-                {/* PAGINACION */}
                 {!loading && totalPages > 1 && (
                     <div className="paginacion">
                         <p>
@@ -369,98 +335,21 @@ const Productos = () => {
                 )}
             </main>
 
-            {/* BOTON VOLVER */}
             <div className="fixed-return-button" onClick={() => navigate('/clientes')}>
                 <FaArrowLeft className="return-icon" />
                 <span className="return-text-hover">Volver a inicio</span>
             </div>
 
-            {/* MODAL EDICION/CREACION */}
-            {modalAbierto && (
-                <div className="modal-overlay" onClick={() => setModalAbierto(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2 className="modal-title">
-                                {productoEditando ? 'Editar Producto' : 'Nuevo Producto'}
-                            </h2>
-                            <button onClick={() => setModalAbierto(false)} className="btn-close-modal">
-                                <FiX />
-                            </button>
-                        </div>
+            {/* Modal de productos*/}
+            <ModalProductos 
+                isOpen={modalAbierto}
+                onClose={() => setModalAbierto(false)}
+                productoEditando={productoEditando}
+                onSave={handleSaveProduct}
+                processing={processingAction}
+            />
 
-                        <div className="modal-body">
-                            <div className="form-group">
-                                <label className="form-label">Nombre del Producto *</label>
-                                <input
-                                    type="text"
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleInputChange}
-                                    onBlur={handleBlur}
-                                    className={`form-input ${isFieldInvalid('nombre') ? 'input-error' : ''}`}
-                                    placeholder="ej: Seguro Total"
-                                />
-                                {isFieldInvalid('nombre') && <span className="error-msg">Este campo es requerido</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Tipo de Seguro *</label>
-                                <select
-                                    name="tipo_producto"
-                                    value={formData.tipo_producto}
-                                    onChange={handleInputChange}
-                                    className="form-select"
-                                >
-                                    <option value="Auto">Auto</option>
-                                    <option value="Hogar">Hogar</option>
-                                    <option value="Vida">Vida</option>
-                                    <option value="Salud">Salud</option>
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Coberturas Incluidas *</label>
-                                <input
-                                    type="text"
-                                    name="coberturas_incluidas"
-                                    value={formData.coberturas_incluidas}
-                                    onChange={handleInputChange}
-                                    onBlur={handleBlur}
-                                    className={`form-input ${isFieldInvalid('coberturas_incluidas') ? 'input-error' : ''}`}
-                                    placeholder="ej: Granizo, Robo..."
-                                />
-                                {isFieldInvalid('coberturas_incluidas') && <span className="error-msg">Este campo es requerido</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Prima Base (ARS) *</label>
-                                <input
-                                    type="number"
-                                    name="prima_base"
-                                    value={formData.prima_base}
-                                    onChange={handleInputChange}
-                                    onBlur={handleBlur}
-                                    className={`form-input ${isFieldInvalid('prima_base') ? 'input-error' : ''}`}
-                                    min="0"
-                                    step="0.01"
-                                />
-                                {isFieldInvalid('prima_base') && <span className="error-msg">Este campo es requerido</span>}
-                            </div>
-                        </div>
-
-                        <div className="modal-footer">
-                            <button onClick={() => setModalAbierto(false)} className="btn-cancel">
-                                Cancelar
-                            </button>
-                            <button onClick={handleSubmit} className="btn-submit">
-                                {processingAction ? 'Guardando...' : 'Guardar'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* MODAL CONFIRMACION */}
+            {/* Modal Confirmacion */}
             {confirmDelete.isVisible && (
                 <div className="modal-overlay" onClick={() => setConfirmDelete({ ...confirmDelete, isVisible: false })}>
                     <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
