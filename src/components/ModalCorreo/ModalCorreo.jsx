@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './modalCorreo.css';
 import api from "../../services/api";
-// URL base para la API de envío de correos
-// const API_MAIL_ENDPOINT = ; 
+import LoadingSpinner from '../../components/Spinner/Spinner';
 
 // Definimos los pasos del modal. Primero inicia con la Seleccion del Formato, luego con la vista/edicion.
 const steps = {
@@ -21,6 +20,7 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     const [draftText, setDraftText] = useState('');
     const [error, setError] = useState(null);
     const [selectedFormat, setSelectedFormat] = useState(null); // almacena el formato elegido por el usuario
+    const [isGenerating, setIsGenerating] = useState(false);
 
     // Reiniciamos el estado al abrir el modal, forzando el primer paso
     useEffect(() => {
@@ -36,44 +36,46 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     if (!isVisible) return null;
 
     // LÓGICA DE MANEJO DE PASOS
-const toneMap = {
-  formal: "muy_formal",
-  intermedio: "neutral",
-  informal: "informal"
-};
+    const toneMap = {
+        formal: "muy_formal",
+        intermedio: "neutral",
+        informal: "informal"
+    };
     // Función que se llama al elegir un formato
-const handleFormatSelect = async (format) => {
-    setSelectedFormat(format);
-    setError(null);
+    const handleFormatSelect = async (format) => {
+        setSelectedFormat(format);
+        setError(null);
+        setIsGenerating(true);
+        try {
+            const backendTone = toneMap[format];
 
-    try {
-        const backendTone = toneMap[format];
+            const response = await api.post("/correos/ia/generar-borrador", {
+                id_persona: clientId || 0,
+                id_producto: idProducto || 1,
+                etapa_relacion: "prospecto",
+                formalidad: backendTone
+            });
 
-        const response = await api.post("/correos/ia/generar-borrador", {
-            id_persona: clientId || 0,
-            id_producto: idProducto || 1,
-            etapa_relacion: "prospecto",
-            formalidad: backendTone
-        });
+            const { cuerpo_sugerido, asunto_sugerido } = response.data;
 
-        const { cuerpo_sugerido, asunto_sugerido } = response.data;
+            // Pasar HTML → texto plano
+            const plainText = cuerpo_sugerido
+                .replace(/<br\s*\/?>/gi, "\n")
+                .replace(/<\/p>/gi, "\n\n")
+                .replace(/<[^>]*>?/gm, "");
 
-        // Pasar HTML → texto plano
-        const plainText = cuerpo_sugerido
-            .replace(/<br\s*\/?>/gi, "\n")
-            .replace(/<\/p>/gi, "\n\n")
-            .replace(/<[^>]*>?/gm, "");
+            setDraftText(plainText);
+            setDraftSubject(asunto_sugerido || "");
+            setCurrentStep(steps.preview_edit);
+        } catch (err) {
+            console.error(err);
+            setError("Error generando el borrador.");
+        } finally {
+            setIsGenerating(false); // 
+        }
+    };
 
-        setDraftText(plainText);
-        setDraftSubject(asunto_sugerido || "");
-        setCurrentStep(steps.preview_edit);
-    } catch (err) {
-        console.error(err);
-        setError("Error generando el borrador.");
-    }
-};
-
-   // Función para volver a la selección de formato
+    // Función para volver a la selección de formato
     const handleGoBackToSelect = () => {
         setCurrentStep(steps.select_format);
         setIsEditing(false); // Aseguramos que no quede en modo edición
@@ -87,38 +89,38 @@ const handleFormatSelect = async (format) => {
 
     // FUNCIÓN DE ENVÍO
 
-const handleSendMail = async () => {
-  try {
-    setIsSending(true);
+    const handleSendMail = async () => {
+        try {
+            setIsSending(true);
 
-    const response = await api.post("/correos/ia/enviar-correo", {
-      id_persona: clientId,
-      id_producto: idProducto || 1,
-      asunto: draftSubject,
-      cuerpo: draftText,
-    });
+            const response = await api.post("/correos/ia/enviar-correo", {
+                id_persona: clientId,
+                id_producto: idProducto || 1,
+                asunto: draftSubject,
+                cuerpo: draftText,
+            });
 
-    // El backend devuelve status, mensaje, id_correo_log
-    onSendSuccess(response.data.mensaje);
+            // El backend devuelve status, mensaje, id_correo_log
+            onSendSuccess(response.data.mensaje);
 
-    alert(`Correo enviado con éxito a ${clientName}!`);
+            alert(`Correo enviado con éxito a ${clientName}!`);
 
-    // Reset de estados
-    setIsSending(false);
-    onClose();
-    setCurrentStep(steps.select_format);
-    setDraftText('');
-    setSelectedFormat(null);
+            // Reset de estados
+            setIsSending(false);
+            onClose();
+            setCurrentStep(steps.select_format);
+            setDraftText('');
+            setSelectedFormat(null);
 
-  } catch (error) {
-    console.error("Error al enviar correo:", error);
+        } catch (error) {
+            console.error("Error al enviar correo:", error);
 
-    let errMsg = error?.response?.data?.detail || "Error desconocido";
-    alert("Error al enviar correo: " + errMsg);
+            let errMsg = error?.response?.data?.detail || "Error desconocido";
+            alert("Error al enviar correo: " + errMsg);
 
-    setIsSending(false);
-  }
-};
+            setIsSending(false);
+        }
+    };
 
 
     // RENDERIZADO DEL PASO DE SELECCIÓN DE FORMATO
@@ -129,25 +131,22 @@ const handleSendMail = async () => {
 
             <div className="format-options">
                 <div
-                    className="format-card formal-format"
-                    onClick={() => handleFormatSelect('formal')}
-                >
+                    className={`format-card formal-format ${isGenerating ? "format-card--disabled" : ""}`}
+                    onClick={isGenerating ? null : () => handleFormatSelect('formal')}>
                     <h4>Formal</h4>
                     <p>Tono profesional y respetuoso. Ideal para comunicaciones más serias.</p>
                 </div>
 
                 <div
-                    className="format-card intermedio-format"
-                    onClick={() => handleFormatSelect('intermedio')}
-                >
+                    className={`format-card intermedio-format ${isGenerating ? "format-card--disabled" : ""}`}
+                    onClick={isGenerating ? null : () => handleFormatSelect('intermedio')}>
                     <h4>Intermedio</h4>
                     <p>Cercano y claro, manteniendo una comunicación profesional y amigable.</p>
                 </div>
 
                 <div
-                    className="format-card informal-format"
-                    onClick={() => handleFormatSelect('informal')}
-                >
+                    className={`format-card informal-format ${isGenerating ? "format-card--disabled" : ""}`}
+                    onClick={isGenerating ? null : () => handleFormatSelect('informal')}>
                     <h4>Informal</h4>
                     <p>Relajado y directo. Perfecto para mensajes simples y de trato más cercano.</p>
                 </div>
@@ -157,8 +156,9 @@ const handleSendMail = async () => {
                 <button
                     className="modal-button modal-button--cancel"
                     onClick={onClose}
+                    disabled={isGenerating}
                 >
-                    Cancelar
+                    {isGenerating ? 'Generando borrador...' : 'Cancelar'}
                 </button>
             </footer>
         </div>
@@ -235,7 +235,7 @@ const handleSendMail = async () => {
 
     // ESTRUCTURA PRINCIPAL DEL MODAL 
     return (
-        <div className="modal-overlay" onClick={isEditing ? null : onClose}>
+        <div className="modal-overlay" onClick={isEditing || isGenerating ? null : onClose}>
 
             {/* Contenido del Modal */}
             <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -252,7 +252,11 @@ const handleSendMail = async () => {
                     ? renderFormatSelection()
                     : renderPreviewEdit()
                 }
-
+                {/* {isGenerating && (
+                    <div className="modal-loading-overlay">
+                        <LoadingSpinner text="Generando borrador..." />
+                    </div>
+                )} */}
             </div>
         </div>
     );
