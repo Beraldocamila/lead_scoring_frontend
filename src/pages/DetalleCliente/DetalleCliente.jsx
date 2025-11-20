@@ -242,7 +242,7 @@ const DetalleCliente = () => {
 
             {/* PRODUCTO RECOMENDADO */}
             {productos_recomendados && productos_recomendados.length > 0 && (
-              <div className="info-card seguros-card">
+              <div className="info-card seguros-card recommended-card">
                 <h3 className="info-card-title">PRODUCTO RECOMENDADO</h3>
 
                 <p className="seguros-subtitle">Basado en el análisis del perfil del cliente </p>
@@ -302,7 +302,8 @@ const DetalleCliente = () => {
       </div>
 
       {/* MODAL */}
-      <ModalCorreo
+      <ModalCorreo 
+        className="mail-subject"
         isVisible={showMailModal}
         onClose={() => setShowMailModal(false)}
         clientId ={features.id}

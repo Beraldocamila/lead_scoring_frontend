@@ -37,11 +37,11 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     if (!isVisible) return null;
 
     // LÓGICA DE MANEJO DE PASOS
-const toneMap = {
-  formal: "muy_formal",
-  intermedio: "neutral",
-  informal: "informal"
-};
+    const toneMap = {
+    formal: "muy_formal",
+    intermedio: "neutral",
+    informal: "informal"
+    };
 
 
     // Función que se llama al elegir un formato
