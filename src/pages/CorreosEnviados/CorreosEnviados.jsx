@@ -1,12 +1,13 @@
 import "./CorreosEnviados.css";
-//import correosData from "../../data/mockCorreos.json";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api"; // conexión con backend
 import Header from '../../components/Header/Header'
 import useAuth from "../../hooks/useAuth";
+import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo';
 // SPINNER
 import LoadingSpinner from '../../components/Spinner/Spinner';
+import { FaRegEye } from "react-icons/fa";
 
 //Libreria Fecha y Estilos
 import DatePicker from "react-datepicker";
@@ -16,7 +17,6 @@ const CorreosEnviados = () => {
   const { user } = useAuth();
   const [mostrarMios, setMostrarMios] = useState(false); // para mostrar mis correos enviados
   const [correos, setCorreos] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [availablePolizas, setAvailablePolizas] = useState([]);
@@ -28,6 +28,9 @@ const CorreosEnviados = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const navigate = useNavigate();
 
+  //Estados para ver el mail enviado
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [emailToView, setEmailToView] = useState(null);
   const correosPorPagina = 10;
   const maxPaginasVisibles = 10;
 
@@ -68,6 +71,18 @@ const CorreosEnviados = () => {
 
   if (loading) return <LoadingSpinner text="Cargando correos..." />;
   if (error) return <p>{error}</p>;
+
+  // Funcion para manejar modal de mail
+  const handleViewEmail = (email) => {
+    setEmailToView(email);
+    setIsViewModalVisible(true);
+  };
+
+  // Funcion para cerrar el modal
+  const handleCloseViewModal = () => {
+    setIsViewModalVisible(false);
+    setEmailToView(null);
+  };
 
   // Funcion de cambio de fecha para el DatePicker
   const handleFechaChange = (date) => {
@@ -194,11 +209,9 @@ const CorreosEnviados = () => {
                   <td>
                     <button
                       className="accion-boton"
-                      onClick={() => navigate(`/DetalleCorreo/${c.id}`)} //aca cambiarrr cuando este la pantalla de borrador de mails
+                      onClick={() => handleViewEmail(c)} // Llama a la función del modal
                     >
-                      <span className="material-symbols-outlined">
-                        visibility
-                      </span>
+                      <FaRegEye className="material-symbols-outlined" />
                     </button>
                   </td>
                 </tr>
@@ -249,6 +262,13 @@ const CorreosEnviados = () => {
         </div>
 
       </main>
+
+      {/* MODAL VISTA CORREO */}
+      <ModalVistaCorreo
+                isVisible={isViewModalVisible}
+                emailData={emailToView}
+                onClose={handleCloseViewModal}
+            />
     </div>
   );
 };
