@@ -4,6 +4,7 @@ import api from "../../services/api";
 import './detalleCliente.css';
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import Header from '../../components/Header/Header'
+import NotificationToast from '../../components/NotificationToast/NotificationToast';
 // Íconos
 import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft,FaRegCheckCircle } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
@@ -12,6 +13,7 @@ import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
 import { IoLocationOutline } from "react-icons/io5";
 import { BiIdCard } from "react-icons/bi";
 import { RiBarChartFill } from "react-icons/ri";
+
 
 //Spinner
 import LoadingSpinner from '../../components/Spinner/Spinner';
@@ -38,6 +40,8 @@ const DetalleCliente = () => {
 
   const [showMailModal, setShowMailModal] = useState(false);
   const [interacciones, setInteracciones] = useState([]);
+
+  const [toast, setToast] = useState({visible: false, type: "success", message: ""});
 
   const handleSendSuccess = (mailBody) => {
     const newInteraction = {
@@ -69,6 +73,14 @@ const DetalleCliente = () => {
     };
     fetchClientData();
   }, [dni]);
+
+  const showToast = (type, message) => {
+  setToast({
+    visible: true,
+    type,
+    message
+  });
+};
 
   // SPINNER MIENTRAS CARGA
   if (loading) return <LoadingSpinner text="Cargando información del cliente." />;
@@ -298,6 +310,14 @@ const DetalleCliente = () => {
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
         idProducto={(productos_recomendados.length > 0 && productos_recomendados?.[0].id) ?? null}
+        showToast= {showToast}
+      />
+
+      <NotificationToast
+          isVisible={toast.visible}
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast({ ...toast, visible: false })}
       />
     </div>
   );

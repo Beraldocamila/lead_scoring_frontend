@@ -10,7 +10,7 @@ const steps = {
 };
 
 
-const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idProducto, onSendSuccess }) => {
+const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idProducto, onSendSuccess, showToast }) => {
 
     // primer modal en select_format para forzar la elección
     const [currentStep, setCurrentStep] = useState(steps.select_format); // primero inicia en "definir formato" despues puede cambiar a editar
@@ -21,6 +21,7 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     const [error, setError] = useState(null);
     const [selectedFormat, setSelectedFormat] = useState(null); // almacena el formato elegido por el usuario
     const [isGenerating, setIsGenerating] = useState(false);
+
 
     // Reiniciamos el estado al abrir el modal, forzando el primer paso
     useEffect(() => {
@@ -36,11 +37,13 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
     if (!isVisible) return null;
 
     // LÓGICA DE MANEJO DE PASOS
-    const toneMap = {
-        formal: "muy_formal",
-        intermedio: "neutral",
-        informal: "informal"
-    };
+const toneMap = {
+  formal: "muy_formal",
+  intermedio: "neutral",
+  informal: "informal"
+};
+
+
     // Función que se llama al elegir un formato
     const handleFormatSelect = async (format) => {
         setSelectedFormat(format);
@@ -103,20 +106,20 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
             // El backend devuelve status, mensaje, id_correo_log
             onSendSuccess(response.data.mensaje);
 
-            alert(`Correo enviado con éxito a ${clientName}!`);
-
-            // Reset de estados
-            setIsSending(false);
-            onClose();
-            setCurrentStep(steps.select_format);
-            setDraftText('');
-            setSelectedFormat(null);
+    showToast("success", `Correo enviado con éxito a ${clientName}!`);
+    
+    // Reset de estados
+    setIsSending(false);
+    onClose();
+    setCurrentStep(steps.select_format);
+    setDraftText('');
+    setSelectedFormat(null);
 
         } catch (error) {
             console.error("Error al enviar correo:", error);
 
-            let errMsg = error?.response?.data?.detail || "Error desconocido";
-            alert("Error al enviar correo: " + errMsg);
+    let errMsg = error?.response?.data?.detail || "Error desconocido";
+    showToast("error", "Error al enviar correo: " + errMsg);
 
             setIsSending(false);
         }
@@ -258,6 +261,7 @@ const ModalCorreo = ({ isVisible, clientDni, onClose, clientName, clientId, idPr
                     </div>
                 )} */}
             </div>
+
         </div>
     );
 };
