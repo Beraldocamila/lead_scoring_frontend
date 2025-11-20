@@ -130,11 +130,6 @@
     transform: none;
 }
 
-.modal-button--cancel[disabled]:hover {
-    background-color: var(--score-naranja) !important; 
-    cursor: not-allowed !important; 
-}
-
 /* Botones */
 .modal-button--send {
     background-color: var(--score-verde);
