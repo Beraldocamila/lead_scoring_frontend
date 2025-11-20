@@ -2,9 +2,13 @@
     min-width: 600px;
     display: flex;
     flex-direction: column;
+    
+    background-color: var(--bg-card);
+    color: var(--texto-principal);
+    border: 1px solid var(--color-borders);
+    box-shadow: var(--sombra-card);
 }
 
-/* CUERPO DEL MODAL*/
 .modal-body.email-viewer {
     flex-grow: 1;
     overflow-y: auto;
@@ -13,40 +17,42 @@
     flex-direction: column;
 }
 
-/* METADATA (Para, Asunto, Enviado por) */
 .email-meta {
     padding: 15px 30px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-borders);
     flex-shrink: 0;
+    background-color: var(--bg-card);
 }
 
 .email-meta p {
     margin: 10px 0;
     font-size: 0.95rem;
-    color: var(--color-gray-text, #666);
+    color: var(--color-gray-text);
 }
 
 .email-meta strong {
-    color: var(--texto-principal, #333);
+    color: var(--texto-principal);
     margin-right: 5px;
 }
 
-/* TÍTULO DEL MODAL */
 .modal-header h3 {
     color: var(--primary-blue);
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-
-/* CUERPO DEL CONTENIDO */
 .email-body-content {
-    background-color: var(--color-light-bg, #f7f7f7);
-    padding: 15px 30px;
-    border: 1px solid var(--color-border);
+    background-color: var(--bg-input); 
+    
+    padding: 20px 30px;
+    margin: 20px 30px;
+    
+    border: 1px solid var(--color-borders);
+    border-radius: 8px;
+    
     line-height: 1.6;
     font-size: 1rem;
-    color: var(--texto-principal, #1a1a1a);
+    color: var(--texto-principal);
     width: auto;
     box-sizing: border-box;
 }
@@ -56,7 +62,8 @@
     justify-content: center;
     gap: 15px;
     padding-top: 20px;
-    border-top: 1px solid var(--color-border);
-    margin-top: 25px;
+    padding-bottom: 25px;
+    border-top: 1px solid var(--color-borders);
+    margin-top: 0;
     background-color: transparent;
 }
