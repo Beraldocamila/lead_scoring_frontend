@@ -1,9 +1,10 @@
 import "./CorreosEnviados.css";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../services/api"; // conexión con backend
+import { useState } from "react";
 import Header from '../../components/Header/Header'
 import useAuth from "../../hooks/useAuth";
+import useMails from "../../hooks/useMails";
+import useProducts from "../../hooks/useProducts";
+
 import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo';
 // SPINNER
 import LoadingSpinner from '../../components/Spinner/Spinner';
@@ -15,18 +16,16 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const CorreosEnviados = () => {
   const { user } = useAuth();
+  const { mails, loadingMails, mailError } = useMails();
+  const { products } = useProducts();
+
   const [mostrarMios, setMostrarMios] = useState(false); // para mostrar mis correos enviados
-  const [correos, setCorreos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [availablePolizas, setAvailablePolizas] = useState([]);
   const [filtroDni, setFiltroDni] = useState("");
   const [filtroMail, setFiltroMail] = useState("");
   const [filtroPoliza, setFiltroPoliza] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
   const [filtroFechaDate, setFiltroFechaDate] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
-  const navigate = useNavigate();
 
   //Estados para ver el mail enviado
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -35,42 +34,13 @@ const CorreosEnviados = () => {
   const maxPaginasVisibles = 10;
 
 
-  // Traer TODOS los correos del Back
-  useEffect(() => {
-    const fetchCorreos = async () => {
-      try {
-        const response = await api.get("/correos/historial");
-        setCorreos(response.data);
-      } catch (err) {
-        console.error("Error al obtener correos:", err);
-        setError("No se pudo cargar el historial de correos.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCorreos();
-  }, []);
+  if (loadingMails) return <LoadingSpinner text="Cargando correos..." />;
+  if (mailError) return <p>{mailError}</p>;
 
-  useEffect(() => {
-    const fetchPolizas = async () => {
-      try {
-        const response = await api.get("/productos");
-
-        // Obtener productos únicos para el filtro dinámico
-        const uniqueTypes = Array.from(new Set(
-          response.data.map(p => p.tipo_producto || [])
-        ));
-
-        setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
-      } catch (err) {
-        console.error("Error al obtener productos:", err);
-      }
-    };
-    fetchPolizas();
-  }, []);
-
-  if (loading) return <LoadingSpinner text="Cargando correos..." />;
-  if (error) return <p>{error}</p>;
+  // Obtener productos únicos para el filtro dinámico
+  const uniqueProducts = Array.from(
+    new Set(products.map((p) => p.tipo_producto))
+  );
 
   // Funcion para manejar modal de mail
   const handleViewEmail = (email) => {
@@ -99,19 +69,24 @@ const CorreosEnviados = () => {
   };
 
   // Filtrado
-  const correosFiltrados = correos.filter((c) =>
-    (filtroDni === "" || (c.dni && c.dni.toString().includes(filtroDni))) &&
-    (filtroMail === "" || (c.mail && c.mail.toLowerCase().includes(filtroMail.toLowerCase()))) &&
-    (filtroPoliza === "" || (c.asunto && c.asunto.toLowerCase().includes(filtroPoliza.toLowerCase()))) &&
-    (filtroFecha === "" || (c.fecha_envio && c.fecha_envio.startsWith(filtroFecha))) &&
-    (!mostrarMios || (user && c.usuario === user.username))
+  const mailsFiltrados = mails.filter((m) =>
+    (filtroDni === "" || (m.dni && m.dni.toString().includes(filtroDni))) &&
+    (filtroMail === "" || (m.mail && m.mail.toLowerCase().includes(filtroMail.toLowerCase()))) &&
+    (filtroPoliza === "" ||
+      (() => {
+        const prod = products.find(p => p.id_producto === m.id_producto);
+        return prod && prod.tipo_producto.toLowerCase().includes(filtroPoliza.toLowerCase());
+      })()
+    ) &&
+    (filtroFecha === "" || (m.fecha_envio && m.fecha_envio.startsWith(filtroFecha))) &&
+    (!mostrarMios || (user && m.usuario === user.username))
   );
 
   // Paginación
-  const totalPaginas = Math.ceil(correosFiltrados.length / correosPorPagina);
+  const totalPaginas = Math.ceil(mailsFiltrados.length / correosPorPagina);
   const indiceUltimo = paginaActual * correosPorPagina;
   const indicePrimero = indiceUltimo - correosPorPagina;
-  const correosMostrados = correosFiltrados.slice(indicePrimero, indiceUltimo);
+  const correosMostrados = mailsFiltrados.slice(indicePrimero, indiceUltimo);
 
 
   // Calcular rango visible de páginas
@@ -170,7 +145,7 @@ const CorreosEnviados = () => {
             }}
           >
             <option value="">Filtrar por: Póliza</option>
-            {availablePolizas.map((p, i) => (
+            {uniqueProducts.map((p, i) => (
               <option key={i} value={p}>
                 {p}
               </option>
@@ -224,8 +199,8 @@ const CorreosEnviados = () => {
         <div className="paginacion">
           <p>
             Mostrando {indicePrimero + 1}-
-            {Math.min(indiceUltimo, correosFiltrados.length)} de{" "}
-            {correosFiltrados.length} resultados
+            {Math.min(indiceUltimo, mailsFiltrados.length)} de{" "}
+            {mailsFiltrados.length} resultados
           </p>
 
           <div className="paginacion-botones">
@@ -265,10 +240,10 @@ const CorreosEnviados = () => {
 
       {/* MODAL VISTA CORREO */}
       <ModalVistaCorreo
-                isVisible={isViewModalVisible}
-                emailData={emailToView}
-                onClose={handleCloseViewModal}
-            />
+        isVisible={isViewModalVisible}
+        emailData={emailToView}
+        onClose={handleCloseViewModal}
+      />
     </div>
   );
 };

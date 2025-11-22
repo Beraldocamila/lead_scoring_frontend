@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../services/api";
 import './detalleCliente.css';
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo'
 import Header from '../../components/Header/Header'
 import NotificationToast from '../../components/NotificationToast/NotificationToast';
+
+import useClients from "../../hooks/useClients";
+import useMails from "../../hooks/useMails";
+import useProducts from "../../hooks/useProducts";
+
 // Íconos
-import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft,FaRegCheckCircle, FaRegEye } from 'react-icons/fa';
+import { FaRegHeart, FaRegUser, FaRegEnvelope, FaArrowLeft, FaRegCheckCircle, FaRegEye } from 'react-icons/fa';
 import { LiaBirthdayCakeSolid } from 'react-icons/lia';
 import { MdAlternateEmail, MdOutlineWorkOutline, MdOutlineHealthAndSafety } from 'react-icons/md';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
@@ -20,7 +24,7 @@ import { RiBarChartFill } from "react-icons/ri";
 import LoadingSpinner from '../../components/Spinner/Spinner';
 
 // Componente para mostrar un item de perfil
-const ProfileItem = ({ icon: Icon, title, value }) => ( 
+const ProfileItem = ({ icon: Icon, title, value }) => (
   <div className="profile-item">
     <div className="profile-icon-wrapper">
       <Icon className="profile-icon" />
@@ -36,13 +40,15 @@ const DetalleCliente = () => {
   const { dni } = useParams();
   const navigate = useNavigate();
 
-  const [client, setClient] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Contextos
+  const { selectedClient, loadingSelectedClient, getClientByDniContext } = useClients();
+  const { mails } = useMails();
+  const { productos } = useProducts();
 
   const [showMailModal, setShowMailModal] = useState(false);
   const [interacciones, setInteracciones] = useState([]);
 
-  const [toast, setToast] = useState({visible: false, type: "success", message: ""});
+  const [toast, setToast] = useState({ visible: false, type: "success", message: "" });
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [emailToView, setEmailToView] = useState(null);
@@ -68,68 +74,24 @@ const DetalleCliente = () => {
     setInteracciones((prev) => [newInteraction, ...prev]);
   };
 
+  const showToast = (type, message) => {
+    setToast({
+      visible: true,
+      type,
+      message
+    });
+  };
+
+  // Traer cliente por DNI al cargar la página
   useEffect(() => {
-    const fetchClientData = async () => {
-      try {
-        const response = await api.get(`/predict/${dni}`);
-        const dataCliente = response.data;
-
-        setClient(dataCliente);
-        const idPersona = dataCliente.features.id; 
-
-        if (idPersona) {
-            try {
-                const historialResponse = await api.get(`/correos/historial/persona/${idPersona}`);
-                
-                const historialFormateado = historialResponse.data.map(mail => ({
-                    tipo: "Mail Enviado",
-                    descripcion: mail.asunto || "Sin asunto",
-                    fecha: new Date(mail.fecha_envio || mail.fecha_creacion).toLocaleDateString('es-AR'),
-
-                    fullData: {
-                      mail: mail.mail || dataCliente.features.email,
-                      asunto: mail.asunto,
-                      usuario: mail.id_usuario.username,
-                      fecha_envio: new Date(mail.fecha_envio || mail.fecha_creacion).toLocaleDateString('es-AR'),
-                      cuerpo: mail.cuerpo
-                    }
-
-                }));
-
-                setInteracciones(historialFormateado);
-            } catch (errHistorial) {
-                console.warn("No se pudo obtener el historial:", errHistorial);
-                setInteracciones([]);
-            }
-        } else {
-            console.warn("No se encontró ID de persona en la respuesta del predict");
-        }
-
-      } catch (error) {
-        console.error("Error al obtener datos del cliente:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (dni) {
-      fetchClientData();
-    }
+    if (dni) getClientByDniContext(dni);
   }, [dni]);
 
-  const showToast = (type, message) => {
-  setToast({
-    visible: true,
-    type,
-    message
-  });
-};
-
   // SPINNER MIENTRAS CARGA
-  if (loading) return <LoadingSpinner text="Cargando información del cliente." />;
-  if (!client) return <p>No se encontró información del cliente.</p>;
+  if (loadingSelectedClient) return <LoadingSpinner text="Cargando información del cliente." />;
+  if (!selectedClient) return <p>No se encontró información del cliente.</p>;
 
-  const { score, nivel, features, productos_recomendados } = client;
+  const { score, nivel, features, productos_recomendados } = selectedClient;
   const formatNumber = (num) => (num || 0).toLocaleString('es-AR');
 
   let scoreColor;
@@ -154,7 +116,7 @@ const DetalleCliente = () => {
         <Header title={`CLIENTE - ${features.nombre_completo || features.nombre + " " + features.apellido}`} />
 
         <div className="column-layout">
-          
+
           {/* COLUMNA IZQUIERDA */}
           <div className="col-izquierda">
 
@@ -252,14 +214,14 @@ const DetalleCliente = () => {
                       <span className="interaccion-date">{interaccion.fecha}</span>
                     </div>
 
-                  {interaccion.fullData && (
-                        <button 
-                            className="btn-view-interaction" 
-                            onClick={() => handleViewEmail(interaccion)}
-                            title="Ver correo completo"
-                        >
-                            <FaRegEye />
-                        </button>
+                    {interaccion.fullData && (
+                      <button
+                        className="btn-view-interaction"
+                        onClick={() => handleViewEmail(interaccion)}
+                        title="Ver correo completo"
+                      >
+                        <FaRegEye />
+                      </button>
                     )}
 
                   </div>
@@ -301,18 +263,18 @@ const DetalleCliente = () => {
 
                 <p className="seguros-subtitle">Basado en el análisis del perfil del cliente </p>
 
-              <div className="seguros-tags">
-                {productos_recomendados.map((prod, i) => {
-                  const tipo = prod.valor.charAt(0).toUpperCase() + prod.valor.slice(1);
-                  const Icon = seguroIcons[tipo] || FaRegCheckCircle;
+                <div className="seguros-tags">
+                  {productos_recomendados.map((prod, i) => {
+                    const tipo = prod.valor.charAt(0).toUpperCase() + prod.valor.slice(1);
+                    const Icon = seguroIcons[tipo] || FaRegCheckCircle;
 
-                  return (
-                    <div key={i} className="seguro-tag seguro-tag--active">
-                      <Icon /> {tipo}
-                    </div>
-                  );
-                })}
-              </div>
+                    return (
+                      <div key={i} className="seguro-tag seguro-tag--active">
+                        <Icon /> {tipo}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -331,7 +293,7 @@ const DetalleCliente = () => {
             {nivel === "Medio" && (
               <div className="info-card" style={{ padding: "1.2rem", marginTop: "1rem" }}>
                 <p style={{ fontSize: "0.95rem", marginBottom: "1rem" }}>
-                  El nivel de este cliente es  <strong> MEDIO</strong>.  
+                  El nivel de este cliente es  <strong> MEDIO</strong>.
                   ¿Querés enviar una recomendación de todas formas?
                 </p>
 
@@ -356,16 +318,16 @@ const DetalleCliente = () => {
       </div>
 
       {/* MODAL */}
-      <ModalCorreo 
+      <ModalCorreo
         className="mail-subject"
         isVisible={showMailModal}
         onClose={() => setShowMailModal(false)}
-        clientId ={features.id}
+        clientId={features.id}
         clientDni={dni}
         clientName={features.nombre_completo || `${features.nombre} ${features.apellido}`}
         onSendSuccess={handleSendSuccess}
         idProducto={(productos_recomendados.length > 0 && productos_recomendados?.[0].id) ?? null}
-        showToast= {showToast}
+        showToast={showToast}
       />
 
       <ModalVistaCorreo
@@ -375,10 +337,10 @@ const DetalleCliente = () => {
       />
 
       <NotificationToast
-          isVisible={toast.visible}
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast({ ...toast, visible: false })}
+        isVisible={toast.visible}
+        type={toast.type}
+        message={toast.message}
+        onClose={() => setToast({ ...toast, visible: false })}
       />
     </div>
   );
