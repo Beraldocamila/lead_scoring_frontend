@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import './detalleCliente.css';
+
 import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo'
 import Header from '../../components/Header/Header'
@@ -42,8 +43,8 @@ const DetalleCliente = () => {
 
   // Contextos
   const { selectedClient, loadingSelectedClient, getClientByDniContext } = useClients();
-  const { mails } = useMails();
-  const { productos } = useProducts();
+  const { personMails, loadingPersonMails, personMailsError, getMailsByPersonaContext } = useMails();
+  const { products, loadingProducts  } = useProducts();
 
   const [showMailModal, setShowMailModal] = useState(false);
   const [interacciones, setInteracciones] = useState([]);
@@ -66,12 +67,13 @@ const DetalleCliente = () => {
   };
 
   const handleSendSuccess = (mailBody) => {
-    const newInteraction = {
-      tipo: "Mail Enviado",
-      descripcion: mailBody.substring(0, 50) + '...',
-      fecha: new Date().toLocaleDateString('es-AR'),
-    };
-    setInteracciones((prev) => [newInteraction, ...prev]);
+    // Recargar el historial para que el nuevo correo aparezca en la lista
+    if (selectedClient?.features?.id) {
+      getMailsByPersonaContext(selectedClient.features.id);
+    }
+    // Mostrar el Toast de notificación
+    showToast("success", "Correo enviado exitosamente.");
+
   };
 
   const showToast = (type, message) => {
@@ -84,20 +86,51 @@ const DetalleCliente = () => {
 
   // Traer cliente por DNI al cargar la página
   useEffect(() => {
-    if (dni) getClientByDniContext(dni);
+    if (dni) {
+      getClientByDniContext(dni);
+    }
   }, [dni]);
 
+  // Traer historial de mails del cliente
+  useEffect(() => {
+    // Cuando el cliente seleccionado esté cargado y tenga ID, cargamos su historial
+    if (selectedClient && selectedClient.features && selectedClient.features.id) {
+      getMailsByPersonaContext(selectedClient.features.id);
+    }
+  }, [selectedClient]);
+
+
+  // Procesar el historial de mails para mostrarlo como interacciones
+  useEffect(() => {
+    if (!personMails || personMails.length === 0) {
+      setInteracciones([]);
+      return;
+    }
+
+    const historial = personMails.map((mail) => ({
+      tipo: "Mail Enviado",
+      descripcion: mail.cuerpo.substring(0, 50) + "...",
+      fecha: new Date(mail.fecha_creacion).toLocaleDateString("es-AR"),
+      fullData: mail
+    }));
+
+    setInteracciones(historial);
+  }, [personMails]);
+
+
   // SPINNER MIENTRAS CARGA
-  if (loadingSelectedClient) return <LoadingSpinner text="Cargando información del cliente." />;
+  if (loadingSelectedClient || loadingPersonMails || loadingProducts) return <LoadingSpinner text="Cargando información del cliente." />;
   if (!selectedClient) return <p>No se encontró información del cliente.</p>;
 
   const { score, nivel, features, productos_recomendados } = selectedClient;
   const formatNumber = (num) => (num || 0).toLocaleString('es-AR');
-
+  
   let scoreColor;
   if (score >= 71) scoreColor = 'var(--score-verde)';
   else if (score >= 41) scoreColor = 'var(--score-naranja)';
   else scoreColor = 'var(--score-rojo)';
+  
+  const tiposProductos = Array.from(new Set(products.map(p => p.tipo_producto)));
 
   const seguroIcons = {
     Hogar: AiOutlineHome,
@@ -141,7 +174,7 @@ const DetalleCliente = () => {
               <p className="seguros-subtitle">Pólizas activas</p>
 
               <div className="seguros-tags">
-                {["Hogar", "Auto", "Vida", "Salud"].map((tipo) => {
+                {tiposProductos.map((tipo) => {
                   const Icon = seguroIcons[tipo];
                   const activo = polizasActivas.includes(tipo.toUpperCase());
                   return (
@@ -203,6 +236,7 @@ const DetalleCliente = () => {
             {/* INTERACCIONES */}
             <div className="info-card interacciones-card">
               <h3 className="info-card-title">INTERACCIONES</h3>
+              {personMailsError && <p className="error-message">{personMailsError}</p>}
               {interacciones.length > 0 ? (
                 interacciones.map((interaccion, index) => (
                   <div key={index} className="interaccion-item">

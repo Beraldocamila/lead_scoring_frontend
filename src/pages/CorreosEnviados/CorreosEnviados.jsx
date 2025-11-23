@@ -1,5 +1,5 @@
 import "./CorreosEnviados.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from '../../components/Header/Header'
 import useAuth from "../../hooks/useAuth";
 import useMails from "../../hooks/useMails";
@@ -16,7 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const CorreosEnviados = () => {
   const { user } = useAuth();
-  const { mails, loadingMails, mailError } = useMails();
+  const { mails, loadingMails, mailError, getMailsContext } = useMails();
   const { products } = useProducts();
 
   const [mostrarMios, setMostrarMios] = useState(false); // para mostrar mis correos enviados
@@ -33,6 +33,11 @@ const CorreosEnviados = () => {
   const correosPorPagina = 10;
   const maxPaginasVisibles = 10;
 
+  //Trae todos los mails
+
+  useEffect(() => {
+    getMailsContext(); 
+  }, []);
 
   if (loadingMails) return <LoadingSpinner text="Cargando correos..." />;
   if (mailError) return <p>{mailError}</p>;

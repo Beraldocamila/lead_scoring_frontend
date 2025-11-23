@@ -22,7 +22,7 @@ import { ClientProvider } from "./contexts/ClientContext";
 import { ProductProvider } from "./contexts/ProductContext";
 
 //Componentes de Mails
-import { MailProvider } from './contexts/MailContext.js';
+import { MailProvider } from './contexts/MailContext';
 
 // Este componente decide si el usuario puede acceder a una ruta.
 const PrivateRoute = ({ element: Element, ...rest }) => {
