@@ -94,7 +94,7 @@ const DetalleCliente = () => {
   // Traer historial de mails del cliente
   useEffect(() => {
     // Cuando el cliente seleccionado esté cargado y tenga ID, cargamos su historial
-    if (selectedClient && selectedClient.features && selectedClient.features.id) {
+    if (selectedClient && selectedClient.features.id) {
       getMailsByPersonaContext(selectedClient.features.id);
     }
   }, [selectedClient]);

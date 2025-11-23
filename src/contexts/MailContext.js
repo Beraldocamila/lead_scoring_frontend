@@ -4,7 +4,7 @@ import mailService from "../services/mailService";
 const MailContext = createContext();
 
 export const MailProvider = ({ children }) => {
-    // Estado para la lista general de correos
+    // Estado para la lista completa de correos
     const [mails, setMails] = useState([]);
     const [loadingMails, setLoadingMails] = useState(true);
     const [mailError, setMailError] = useState(null);
@@ -14,7 +14,7 @@ export const MailProvider = ({ children }) => {
     const [loadingPersonMails, setLoadingPersonMails] = useState(false);
     const [personMailsError, setPersonMailsError] = useState(null);
 
-    // Traer TODOS los mails
+    // Trae todos los mails
     const getMailsContext = async () => {
         setLoadingMails(true);
         try {
@@ -40,7 +40,6 @@ export const MailProvider = ({ children }) => {
         } catch (error) {
             console.error("Error al traer historial de la persona:", error);
             setPersonMailsError("No se pudo cargar el historial de correos del cliente.");
-            setPersonMails([]); // Limpiar la lista de historial en caso de error
         } finally {
             setLoadingPersonMails(false);
         }
