@@ -13,7 +13,7 @@ export const ProductProvider = ({ children }) => {
     const [loadingSelectedProduct, setLoadingSelectedProduct] = useState(false);
     const [selectedProductError, setSelectedProductError] = useState(null);
 
-    // Traer todos los productos (Explícito, no auto-ejecutado)
+    // Traer todos los productos
     const getProducts = async () => {
         setLoadingProducts(true);
         setProductError(null);
@@ -30,7 +30,7 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
-    // Funciones CRUD que llaman a getProducts para refrescar la lista
+    // Funciones CRUD
     const addProduct = async (formData) => {
         try {
             await productService.addProduct(formData);

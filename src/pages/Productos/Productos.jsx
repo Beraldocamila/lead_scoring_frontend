@@ -59,7 +59,6 @@ const Productos = () => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                // Llama a la función explícita del contexto
                 await getProducts();
             } catch (err) {
                 console.error("Fallo la carga inicial de productos:", err);
@@ -77,7 +76,7 @@ const Productos = () => {
         setNotification({ isVisible: true, type, message });
     };
 
-    // Derivación de tipos de pólizas disponibles para el filtro (Ahora de 'productos' del contexto)
+    // pólizas disponibles para el filtro
     const availablePolizas = useMemo(() => {
         // Usamos la lista de productos del contexto
         if (!products || products.length === 0) return [];
@@ -116,25 +115,6 @@ const Productos = () => {
         return result;
     }, [products, searchTerm, filterType, sortBy]);
 
-    // // Aplique el filtro para que sea similar al de CorreosEnviados
-    // useEffect(() => {
-    //     const fetchPolizas = async () => {
-    //         try {
-    //             const response = await api.get("/productos");
-
-    //             // Obtener productos únicos para el filtro dinámico
-    //             const uniqueTypes = Array.from(new Set(
-    //                 response.data.map(p => p.tipo_producto || [])
-    //             ));
-
-    //             setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
-    //         } catch (err) {
-    //             console.error("Error al obtener productos:", err);
-    //         }
-    //     };
-    //     fetchPolizas();
-    // }, []);
-
     const totalPages = Math.ceil(productosProcesados.length / itemsPerPage);
     const paginatedProducts = productosProcesados.slice(
         (currentPage - 1) * itemsPerPage,
@@ -155,8 +135,8 @@ const Productos = () => {
         setModalAbierto(true);
     };
 
+
     // Aca se maneja el guardado (recibe datos del modal)
-    // Aca se maneja el guardado (recibe datos del modal) - USA FUNCIONES DEL CONTEXTO
     const handleSaveProduct = async (formData) => {
         try {
             setProcessingAction(true);
@@ -183,7 +163,7 @@ const Productos = () => {
         }
     };
 
-    // Confirma la eliminación - USA FUNCIONES DEL CONTEXTO
+    // Confirma la eliminación
     const confirmarEliminacion = async () => {
         try {
             setProcessingAction(true);
@@ -262,7 +242,6 @@ const Productos = () => {
 
                 <div className="productos-grid">
                     {loadingProducts ? (
-                        // Usamos el estado de carga del contexto
                         [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
                     ) : products.length === 0 && !searchTerm && filterType === 'Todos' ? (
                         <div className="empty-state">
