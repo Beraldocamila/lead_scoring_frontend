@@ -44,7 +44,7 @@ const DetalleCliente = () => {
   // Contextos
   const { selectedClient, loadingSelectedClient, getClientByDniContext } = useClients();
   const { personMails, loadingPersonMails, personMailsError, getMailsByPersonaContext } = useMails();
-  const { products, loadingProducts  } = useProducts();
+  const { products, loadingProducts, getProducts } = useProducts();
 
   const [showMailModal, setShowMailModal] = useState(false);
   const [interacciones, setInteracciones] = useState([]);
@@ -117,6 +117,9 @@ const DetalleCliente = () => {
     setInteracciones(historial);
   }, [personMails]);
 
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   // SPINNER MIENTRAS CARGA
   if (loadingSelectedClient || loadingPersonMails || loadingProducts) return <LoadingSpinner text="Cargando información del cliente." />;
@@ -124,12 +127,12 @@ const DetalleCliente = () => {
 
   const { score, nivel, features, productos_recomendados } = selectedClient;
   const formatNumber = (num) => (num || 0).toLocaleString('es-AR');
-  
+
   let scoreColor;
   if (score >= 71) scoreColor = 'var(--score-verde)';
   else if (score >= 41) scoreColor = 'var(--score-naranja)';
   else scoreColor = 'var(--score-rojo)';
-  
+
   const tiposProductos = Array.from(new Set(products.map(p => p.tipo_producto)));
 
   const seguroIcons = {

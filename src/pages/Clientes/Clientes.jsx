@@ -9,7 +9,7 @@ import useProducts from "../../hooks/useProducts";
 
 const Clientes = () => {
   const { clients, loadingClients, clientError, getClients } = useClients();
-  const { products } = useProducts();
+  const { products, getProducts } = useProducts();
 
   const [filtro, setFiltro] = useState("");
   const [orden, setOrden] = useState("Nombre");
@@ -20,6 +20,7 @@ const Clientes = () => {
 
   useEffect(() => {
     getClients();
+    getProducts();
   }, []);
   
   // SPINNER MIENTRAS CARGA
