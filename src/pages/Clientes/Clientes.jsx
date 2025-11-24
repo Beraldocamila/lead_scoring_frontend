@@ -1,45 +1,35 @@
 import "./Clientes.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import api from "../../services/api"; // conexión con el backend
 import Header from '../../components/Header/Header'
 import LoadingSpinner from "../../components/Spinner/Spinner";
+import useClients from "../../hooks/useClients";
+import useProducts from "../../hooks/useProducts";
 
 const Clientes = () => {
-  const [clients, setClients] = useState([]); // clientes desde el backend
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { clients, loadingClients, clientError, getClients } = useClients();
+  const { products, getProducts } = useProducts();
+
   const [filtro, setFiltro] = useState("");
   const [orden, setOrden] = useState("Nombre");
   const [filtroProducto, setFiltroProducto] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const clientesPorPagina = 10;
   const navigate = useNavigate();
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // Trae los clientes del backend (ya incluye productos)
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await api.get("/clientes");
-        setClients(response.data);
-      } catch (err) {
-        console.error("Error al obtener clientes:", err);
-        setError("No se pudieron cargar los clientes.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchClients();
+    getClients();
+    getProducts();
   }, []);
+  
   // SPINNER MIENTRAS CARGA
-  if (loading) return <LoadingSpinner text="Cargando clientes." />;
-  if (error) return <p>{error}</p>;
+  if (loadingClients) return <LoadingSpinner text="Cargando clientes." />;
+  if (clientError) return <p>{clientError}</p>;
 
   // Obtener productos únicos para el filtro dinámico
   const uniqueProducts = Array.from(
-    new Set(clients.flatMap((c) => c.productos || []))
+    new Set(products.map((p) => p.tipo_producto))
   );
 
   // Filtrado por nombre, DNI y producto
@@ -108,9 +98,7 @@ const Clientes = () => {
             >
               <option value="">Filtrar por: Producto</option>
               {uniqueProducts.map((p, i) => (
-                <option key={i} value={p}>
-                  {p}
-                </option>
+                <option key={i} value={p}>{p}</option>
               ))}
             </select>
           </div>

@@ -1,7 +1,7 @@
 import './App.css';
 import './index.css';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"; 
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 // Componentes de Páginas
 import DetalleCliente from './pages/DetalleCliente/DetalleCliente.jsx';
 import Clientes from './pages/Clientes/Clientes.jsx';
@@ -15,6 +15,14 @@ import Productos from './pages/Productos/Productos.jsx';
 import { AuthProvider } from './contexts/AuthContext'; // Proveedor del Contexto
 import useAuth from './hooks/useAuth.js'; // Hook para acceder al Contexto
 
+//Componentes de Clientes
+import { ClientProvider } from "./contexts/ClientContext";
+
+//Componentes de Productos (Polizas)
+import { ProductProvider } from "./contexts/ProductContext";
+
+//Componentes de Mails
+import { MailProvider } from './contexts/MailContext';
 
 // Este componente decide si el usuario puede acceder a una ruta.
 const PrivateRoute = ({ element: Element, ...rest }) => {
@@ -39,32 +47,38 @@ function App() {
     // Se envuelve toda la aplicación con el AuthProvider para que el contexto esté disponible
     <Router>
       <AuthProvider>
-        <Routes>
-          {/* Rutas accesibles sin estar logueado */}
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} /> 
+        <ClientProvider>
+          <ProductProvider>
+            <MailProvider>
+              <Routes>
+                {/* Rutas accesibles sin estar logueado */}
+                <Route path="/" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-          {/* Rutas que Requieren autenticación */}
-          <Route
-            path="/clientes"
-            element={<PrivateRoute element={Clientes} />}
-          />
-          <Route
-            path="/DetalleCliente/:dni"
-            element={<PrivateRoute element={DetalleCliente} />}
-          />
-          <Route
-            path="/correos-enviados"
-            element={<PrivateRoute element={CorreosEnviados} />}
-          />
+                {/* Rutas que Requieren autenticación */}
+                <Route
+                  path="/clientes"
+                  element={<PrivateRoute element={Clientes} />}
+                />
+                <Route
+                  path="/DetalleCliente/:dni"
+                  element={<PrivateRoute element={DetalleCliente} />}
+                />
+                <Route
+                  path="/correos-enviados"
+                  element={<PrivateRoute element={CorreosEnviados} />}
+                />
 
-          <Route 
-          path="/productos" 
-          element={<PrivateRoute element={Productos} />} 
-          />
+                <Route
+                  path="/productos"
+                  element={<PrivateRoute element={Productos} />}
+                />
 
 
-        </Routes>
+              </Routes>
+            </MailProvider>
+          </ProductProvider>
+        </ClientProvider>
       </AuthProvider>
     </Router>
   );
