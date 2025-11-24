@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FiEdit, FiTrash2, FiPlus, FiSearch, FiX } from 'react-icons/fi';
 import { AiOutlineCar, AiOutlineHome } from 'react-icons/ai';
 import { FaRegHeart, FaArrowLeft } from 'react-icons/fa';
 import { MdOutlineHealthAndSafety } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
-import api from '../../services/api';
-import NotificationToast from '../../components/NotificationToast/NotificationToast'; 
+import NotificationToast from '../../components/NotificationToast/NotificationToast';
 import ModalProductos from '../../components/ModalProductos/ModalProductos';
 import './productos.css';
+
+import useProducts from '../../hooks/useProducts';
 
 // Skeleton para carga
 const ProductSkeleton = () => (
@@ -27,19 +28,17 @@ const ProductSkeleton = () => (
 
 const Productos = () => {
     const navigate = useNavigate();
-    
+    const { products, loadingProducts, getProducts, addProduct, updateProduct, deleteProduct } = useProducts();
+
     // Estados para Datos 
-    const [productos, setProductos] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [processingAction, setProcessingAction] = useState(false);
-    const [availablePolizas, setAvailablePolizas] = useState([]);
 
     // Estados para filtrado y paginacion
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('Todos');
-    const [sortBy, setSortBy] = useState('nombre_asc'); 
+    const [sortBy, setSortBy] = useState('nombre_asc');
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12; 
+    const itemsPerPage = 12;
 
     // Estado para modal (Ahora simplificado)
     const [modalAbierto, setModalAbierto] = useState(false);
@@ -58,37 +57,44 @@ const Productos = () => {
 
     // Carga inicial
     useEffect(() => {
-        fetchProductos();
+        const fetchInitialData = async () => {
+            try {
+                // Llama a la función explícita del contexto
+                await getProducts();
+            } catch (err) {
+                console.error("Fallo la carga inicial de productos:", err);
+                showToast('error', 'Error al cargar los productos iniciales.');
+            }
+        };
+        fetchInitialData();
     }, []);
 
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filterType, sortBy]);
 
-    const fetchProductos = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/productos');
-            setProductos(response.data);
-        } catch (error) {
-            console.error('Error al cargar:', error);
-            showToast('error', 'Error al cargar los productos.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const showToast = (type, message) => {
         setNotification({ isVisible: true, type, message });
     };
 
+    // Derivación de tipos de pólizas disponibles para el filtro (Ahora de 'productos' del contexto)
+    const availablePolizas = useMemo(() => {
+        // Usamos la lista de productos del contexto
+        if (!products || products.length === 0) return [];
+
+        // Obtener productos únicos para el filtro dinámico
+        return Array.from(new Set(
+            products.map(p => p.tipo_producto).filter(Boolean)
+        ));
+    }, [products]);
+
     const productosProcesados = useMemo(() => {
-        let result = [...productos];
+        let result = [...products];
 
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
-            result = result.filter(p => 
-                p.nombre.toLowerCase().includes(term) || 
+            result = result.filter(p =>
+                p.nombre.toLowerCase().includes(term) ||
                 p.coberturas_incluidas.toLowerCase().includes(term)
             );
         }
@@ -108,26 +114,26 @@ const Productos = () => {
         });
 
         return result;
-    }, [productos, searchTerm, filterType, sortBy]);
+    }, [products, searchTerm, filterType, sortBy]);
 
-    // Aplique el filtro para que sea similar al de CorreosEnviados
-    useEffect(() => {
-    const fetchPolizas = async () => {
-      try {
-        const response = await api.get("/productos");
+    // // Aplique el filtro para que sea similar al de CorreosEnviados
+    // useEffect(() => {
+    //     const fetchPolizas = async () => {
+    //         try {
+    //             const response = await api.get("/productos");
 
-        // Obtener productos únicos para el filtro dinámico
-        const uniqueTypes = Array.from(new Set(
-          response.data.map(p => p.tipo_producto || [])
-        ));
+    //             // Obtener productos únicos para el filtro dinámico
+    //             const uniqueTypes = Array.from(new Set(
+    //                 response.data.map(p => p.tipo_producto || [])
+    //             ));
 
-        setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
-      } catch (err) {
-        console.error("Error al obtener productos:", err);
-      }
-    };
-    fetchPolizas();
-  }, []);
+    //             setAvailablePolizas(uniqueTypes); // Guardamos la lista limpia en el nuevo estado
+    //         } catch (err) {
+    //             console.error("Error al obtener productos:", err);
+    //         }
+    //     };
+    //     fetchPolizas();
+    // }, []);
 
     const totalPages = Math.ceil(productosProcesados.length / itemsPerPage);
     const paginatedProducts = productosProcesados.slice(
@@ -150,20 +156,23 @@ const Productos = () => {
     };
 
     // Aca se maneja el guardado (recibe datos del modal)
+    // Aca se maneja el guardado (recibe datos del modal) - USA FUNCIONES DEL CONTEXTO
     const handleSaveProduct = async (formData) => {
         try {
             setProcessingAction(true);
             const dataToSend = { ...formData, prima_base: Number(formData.prima_base) };
 
             if (productoEditando) {
-                await api.put(`/productos/${productoEditando.id_producto}`, dataToSend);
+                // Usamos la función del contexto para actualizar
+                await updateProduct(productoEditando.id_producto, dataToSend);
                 showToast('success', 'Producto actualizado exitosamente');
             } else {
-                await api.post('/productos', dataToSend);
+                // Usamos la función del contexto para crear
+                await addProduct(dataToSend);
                 showToast('success', 'Producto creado exitosamente');
             }
 
-            await fetchProductos();
+            // La llamada a getProducts() se maneja dentro de updateProduct/addProduct en el Context
             setModalAbierto(false);
         } catch (error) {
             console.error('Error al guardar:', error);
@@ -174,12 +183,16 @@ const Productos = () => {
         }
     };
 
+    // Confirma la eliminación - USA FUNCIONES DEL CONTEXTO
     const confirmarEliminacion = async () => {
         try {
             setProcessingAction(true);
-            await api.delete(`/productos/${confirmDelete.productoId}`);
+
+            // Usamos la función del contexto para eliminar
+            await deleteProduct(confirmDelete.productoId);
             showToast('success', 'Producto eliminado exitosamente');
-            await fetchProductos();
+
+            // La llamada a getProducts() se maneja dentro de deleteProduct en el Context
         } catch (error) {
             console.error('Error al eliminar:', error);
             const msg = error.response?.data?.detail || 'Error al eliminar.';
@@ -194,7 +207,7 @@ const Productos = () => {
 
     return (
         <div className="productos-container">
-            <NotificationToast 
+            <NotificationToast
                 isVisible={notification.isVisible}
                 type={notification.type}
                 message={notification.message}
@@ -207,18 +220,18 @@ const Productos = () => {
                 <div className="toolbar-container">
                     <div className="search-wrapper">
                         <FiSearch className="search-icon" />
-                        <input 
-                            type="text" 
-                            placeholder="Buscar por nombre o cobertura..." 
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre o cobertura..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"
                         />
                     </div>
-                    
+
                     <div className="filters-wrapper">
-                        <select 
-                            value={filterType} 
+                        <select
+                            value={filterType}
                             onChange={(e) => setFilterType(e.target.value)}
                             className="filter-select"
                         >
@@ -230,8 +243,8 @@ const Productos = () => {
                             ))}
                         </select>
 
-                        <select 
-                            value={sortBy} 
+                        <select
+                            value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
                             className="filter-select"
                         >
@@ -248,8 +261,14 @@ const Productos = () => {
                 </div>
 
                 <div className="productos-grid">
-                    {loading ? (
+                    {loadingProducts ? (
+                        // Usamos el estado de carga del contexto
                         [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
+                    ) : products.length === 0 && !searchTerm && filterType === 'Todos' ? (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">📄</div>
+                            <p className="empty-state-text">No hay productos cargados en el sistema.</p>
+                        </div>
                     ) : paginatedProducts.length > 0 ? (
                         paginatedProducts.map(producto => {
                             const IconoTipo = iconosPorTipo[producto.tipo_producto];
@@ -299,7 +318,7 @@ const Productos = () => {
                     )}
                 </div>
 
-                {!loading && totalPages > 1 && (
+                {!loadingProducts && totalPages > 1 && (
                     <div className="paginacion">
                         <p>
                             Mostrando {Math.min(indexOfFirstItem + 1, totalItems)}-
@@ -307,13 +326,13 @@ const Productos = () => {
                             {totalItems} resultados
                         </p>
                         <div className="paginacion-botones">
-                            <button 
+                            <button
                                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
                             >
                                 {"<"}
                             </button>
-                            
+
                             {Array.from({ length: totalPages }, (_, i) => (
                                 <button
                                     key={i}
@@ -324,7 +343,7 @@ const Productos = () => {
                                 </button>
                             ))}
 
-                            <button 
+                            <button
                                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                 disabled={currentPage === totalPages}
                             >
@@ -341,7 +360,7 @@ const Productos = () => {
             </div>
 
             {/* Modal de productos*/}
-            <ModalProductos 
+            <ModalProductos
                 isOpen={modalAbierto}
                 onClose={() => setModalAbierto(false)}
                 productoEditando={productoEditando}
