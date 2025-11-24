@@ -1,39 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaRegUser } from "react-icons/fa6";
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaRegUser, FaSpinner, FaLock, FaArrowRight, FaExclamationCircle, FaPause, FaPlay, FaSun, FaMoon } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
+import FloatingPaths from '../../components/FloatingPaths/FloatingPaths'; 
 
 import useAuth from '../../hooks/useAuth';
 import './login.css';
 
-// Constante para el límite de caracteres
 const MAX_LENGTH = 20;
-// Constantes para el bloqueo por intentos fallidos
-const MAX_ATTEMPTS = 3; // Límite de intentos
-const LOCK_TIME_MS = 60000; // Tiempo de bloqueo en milisegundos (60 segundos)
+const MAX_ATTEMPTS = 3;
+const LOCK_TIME_MS = 60000;
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [clave, setClave] = useState('');
-    // El error se usa para mostrar el mensaje del servidor o de validación local
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    // NUEVOS ESTADOS PARA EL BLOQUEO 
     const [failCount, setFailCount] = useState(0);
     const [isLocked, setIsLocked] = useState(false);
-    // Estado para el tiempo restante del bloqueo
     const [lockTimeRemaining, setLockTimeRemaining] = useState(0);
+    const [animationsPaused, setAnimationsPaused] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
 
-    // Referencia para limpiar el timer del bloqueo si el componente se desmonta
     const lockTimerRef = useRef(null);
-    // Referencia para el timer del contador de tiempo restante
     const countdownTimerRef = useRef(null);
 
-    // Obtenemos la función login del AuthContext
     const { login, isLoggedIn } = useAuth();
-
-    // Inicializo el hook de navegación
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,6 +34,15 @@ const Login = () => {
             navigate('/clientes');
         }
     }, [isLoggedIn, navigate]);
+
+    // Effect para manejar dark-mode
+    useEffect(() => {
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }, [darkMode]);
 
     // Effect para manejar el contador de tiempo restante del bloqueo
     useEffect(() => {
@@ -53,7 +55,7 @@ const Login = () => {
             countdownTimerRef.current = setInterval(() => {
                 setLockTimeRemaining(prevTime => {
                     if (prevTime <= 1) {
-                        clearInterval(countdownTimerRef.current); // Detener el contador
+                        clearInterval(countdownTimerRef.current);
                         return 0;
                     }
                     return prevTime - 1;
@@ -70,32 +72,23 @@ const Login = () => {
 
     // Función para manejar el cambio y la validación en tiempo real
     const handleInputChange = (setter, value, fieldName) => {
-        setter(value); // Actualiza el estado
-
-        // Realiza la validación de longitud en tiempo real
+        setter(value);
         if (value.length > MAX_LENGTH) {
             // Muestra el error de longitud inmediatamente
             setError(`Error: El campo "${fieldName}" no puede tener más de ${MAX_LENGTH} caracteres.`);
-        }
-        // Si el valor vuelve a ser válido (longitud <= MAX_LENGTH) y hay un error de longitud activo, lo borra.
-        // Lo verificamos si el error comienza con 'Error:' para no borrar errores de campos vacíos o de servidor.
-        else if (error && error.startsWith('Error:')) {
+        } else if (error && error.startsWith('Error:')) {
             setError('');
         }
     };
 
-    // NUEVA FUNCIÓN para manejar el bloqueo
+    // Manejo de bloqueo
     const startLockdown = () => {
         setIsLocked(true);
-        // Establece el mensaje de error de bloqueo
         setError(`Demasiados intentos fallidos. Por favor, espera ${LOCK_TIME_MS / 1000} segundos.`);
-
-        // Configura un timer para levantar el bloqueo
         lockTimerRef.current = setTimeout(() => {
             setIsLocked(false);
-            setFailCount(0); // Resetea el contador de fallos
-            setError(''); // Limpia el mensaje de error
-            // También se borra el timer del countdown en el useEffect de limpieza
+            setFailCount(0);
+            setError('');
         }, LOCK_TIME_MS);
     };
 
@@ -103,138 +96,317 @@ const Login = () => {
         e.preventDefault();
         setError('');
 
-        // VALIDACIÓN: Si está bloqueado, salir y no procesar
         if (isLocked) {
             setError(`Tu cuenta está bloqueada temporalmente. Intenta de nuevo en ${lockTimeRemaining} segundos.`);
             return;
         }
 
-        setLoading(true);
-
-        // VALIDACIÓN LOCAL: Verificar campos vacíos
         if (username.trim() === '' || clave.trim() === '') {
             setError('Por favor, ingresa tu usuario y contraseña.');
-            setLoading(false);
             return;
         }
 
-        // VALIDACIÓN LOCAL: Verificación de longitud
         if (username.length > MAX_LENGTH || clave.length > MAX_LENGTH) {
-            // Si la longitud es inválida, muestra un mensaje de error y detiene el proceso
             setError(`Por favor, corrige la longitud de los campos. Máximo ${MAX_LENGTH} caracteres permitidos.`);
-            setLoading(false);
             return;
         }
 
-        // LLAMADA AL CONTEXTO
+        setLoading(true);
+
         const result = await login(username, clave);
 
         if (result.success) {
-            // Si el login es exitoso, navegamos a la página principal de clientes y reinicia el contador
             setFailCount(0);
             navigate('/clientes');
         } else {
-            // FALLO: Actualizar el contador de fallos
             setFailCount(prevCount => {
                 const newCount = prevCount + 1;
-
-                // Si el nuevo contador llega al límite, activar el bloqueo
                 if (newCount >= MAX_ATTEMPTS) {
                     startLockdown();
                 }
-
-                // Si no está bloqueado, mostrar el error del backend
-                if (!isLocked) {
-                    setError(result.error);
-                }
-
                 return newCount;
             });
 
-            // Mostrar el error del backend si no se activó el bloqueo en el setFailCount
-            if (failCount + 1 < MAX_ATTEMPTS && !isLocked) {
+            if (failCount + 1 < MAX_ATTEMPTS) {
                 setError(result.error);
             }
         }
-
-        setLoading(false); // Siempre termina el estado de carga
+        setLoading(false);
     };
 
-    // La lógica para deshabilitar el botón
     const isLengthInvalid = username.length > MAX_LENGTH || clave.length > MAX_LENGTH;
-    // NUEVA CONDICIÓN para deshabilitar el botón si está bloqueado
-    const isButtonDisabled = loading || isLengthInvalid || isLocked; 
-    
-    // Mensaje para el contador de intentos fallidos
-    const attemptsMessage = !isLocked && failCount > 0 ? 
-        `Intentos restantes: ${MAX_ATTEMPTS - failCount}` : '';
+    const isButtonDisabled = loading || isLengthInvalid || isLocked
 
     return (
-        <div className="login-page-container">
-            {/* Panel izquierdo: Formulario de Login */}
-            <div className="login-form-panel">
-                <h1 className="login-title">LOGIN</h1>
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className="input-group">
-                        <FaRegUser className="input-icon" />
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            // Usamos el nuevo handler para validar mientras se escribe
-                            onChange={(e) => handleInputChange(setUsername, e.target.value, 'Usuario')}
-                            required
-                            aria-label="Username"
-                            className="login-input"
-                            // Deshabilitar si está bloqueado
-                            disabled={isLocked}
-                        />
+        <div className="modern-login-container">
+            {/* Fondo Animado (Las lineas de la izquierda) */}
+            <FloatingPaths position={1} paused={animationsPaused} />
+            <FloatingPaths position={-1} paused={animationsPaused} />
+
+            {/* Panel izquierdo */}
+            <div className="login-left-panel">
+                <div className="login-glow" />
+                
+                <motion.div 
+                    className="login-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                >
+                    <div className="login-header">
+                        <motion.div 
+                            className="icon-container"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                        >
+                            <FaRegUser />
+                        </motion.div>
+                        <h1 className="login-title">LOGIN</h1>
+                        <p className="login-subtitle">Bienvenido al sistema de Seguros</p>
                     </div>
-                    <div className="input-group">
-                        <RiLockPasswordLine className="input-icon" />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={clave}
-                            // Usamos el nuevo handler para validar mientras se escribe
-                            onChange={(e) => handleInputChange(setClave, e.target.value, 'Contraseña')}
-                            required
-                            aria-label="Password"
-                            className="login-input"
-                            // Deshabilitar si está bloqueado
-                            disabled={isLocked}
-                        />
-                    </div>
-                    {/* Muestra el mensaje de error/bloqueo */}
-                    {error && <p className={`error-message ${isLocked ? 'locked-error' : ''}`}>{error}</p>}
-                    
-                    {/* Mensaje de intentos restantes */}
-                    {attemptsMessage && !isLocked && (
-                        <p className="attempts-message">{attemptsMessage}</p>
-                    )}
-                    
-                    <button 
-                        type="submit" 
-                        className="login-button" 
-                        // Deshabilitado si está cargando, si la longitud es inválida O si está bloqueado
-                        disabled={isButtonDisabled}
+
+                    <form onSubmit={handleLogin}>
+                        <div className="form-group">
+                            <label className="label-text">Usuario</label>
+                            <div className="input-wrapper">
+                                <FaRegUser className="input-icon" />
+                                <input 
+                                    type="text" 
+                                    className="modern-input" 
+                                    placeholder="Ingresa tu usuario"
+                                    value={username}
+                                    onChange={(e) => handleInputChange(setUsername, e.target.value, 'Usuario')}
+                                    disabled={isLocked}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="label-text">Contraseña</label>
+                            <div className="input-wrapper">
+                                <RiLockPasswordLine className="input-icon" />
+                                <input 
+                                    type="password" 
+                                    className="modern-input" 
+                                    placeholder="••••••••"
+                                    value={clave}
+                                    onChange={(e) => handleInputChange(setClave, e.target.value, 'Contraseña')}
+                                    disabled={isLocked}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <AnimatePresence mode="wait">
+                            {error && (
+                                <motion.div 
+                                    className="feedback-msg feedback-error"
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                >
+                                    <FaExclamationCircle size={16} style={{ flexShrink: 0 }} /> 
+                                    <span>{error}</span>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {!error && !isLocked && failCount > 0 && (
+                            <motion.p 
+                                className="attempts-text"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                Intentos restantes: {MAX_ATTEMPTS - failCount}
+                            </motion.p>
+                        )}
+
+                        <motion.button 
+                            type="submit" 
+                            className="btn-modern"
+                            disabled={isButtonDisabled}
+                            whileHover={!isButtonDisabled ? { scale: 1.02 } : {}}
+                            whileTap={!isButtonDisabled ? { scale: 0.98 } : {}}
+                        >
+                            {loading ? (
+                                <>
+                                    <FaSpinner className="animate-spin" /> 
+                                    <span>Validando...</span>
+                                </>
+                            ) : isLocked ? (
+                                <>
+                                    <FaLock /> 
+                                    <span>Bloqueado ({lockTimeRemaining}s)</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Iniciar Sesión</span> 
+                                    <FaArrowRight style={{ opacity: 0.7 }} />
+                                </>
+                            )}
+                        </motion.button>
+                    </form>
+
+                    <motion.div 
+                        className="register-link"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
                     >
-                        {isLocked ? `Bloqueado (${lockTimeRemaining}s)` : (loading ? 'Iniciando Sesión...' : 'Iniciar Sesión')}
-                    </button>
-                </form>
-
-                {/* Enlace a la página de Registro */}
-                <p className="link-to-register">
-                    ¿No tenes una cuenta? <Link to="/register">Registrate</Link>
-                </p>
-
+                        <p>¿No tienes una cuenta? <Link to="/register">Regístrate</Link></p>
+                    </motion.div>
+                </motion.div>
             </div>
 
-            {/* Panel derecho: Logo/Decoración */}
-            <div className="login-decoration-panel">
-                <div className="login-logo-card">
-                    <span className="login-logo-text">LOGO</span>
-                </div>
+            {/* Panel derecho*/}
+            <div className="login-right-panel">
+                {/* GRADIENTE ANIMADO DE FONDO */}
+                <motion.div 
+                    className="animated-gradient-bg"
+                    animate={animationsPaused ? {} : {
+                        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                    }}
+                    transition={{
+                        duration: 15,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                />
+                
+                {/* Degradado para suavizar los bordes */}
+                <div className="image-gradient-mask" />
+                
+                {/* OVERLAY con blur */}
+                <div className="right-panel-overlay" />
+                
+                {/* Glows decorativos */}
+                <motion.div 
+                    className="right-glow-top"
+                    animate={animationsPaused ? {} : {
+                        scale: [1, 1.3, 1],
+                        opacity: [0.3, 0.5, 0.3]
+                    }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                />
+                <motion.div 
+                    className="right-glow-bottom"
+                    animate={animationsPaused ? {} : {
+                        scale: [1, 1.4, 1],
+                        opacity: [0.25, 0.45, 0.25]
+                    }}
+                    transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                />
+
+                {/* Contenido Textual */}
+                <motion.div 
+                    className="right-panel-content"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3, duration: 0.8 }}
+                >
+                    <motion.div 
+                        className="hero-icon-box"
+                        style={{ 
+                            transformStyle: "preserve-3d",
+                            position: 'relative',
+                            height: '100px'
+                        }} 
+                        animate={animationsPaused 
+                            ? { rotateY: 0 }
+                            : { rotateY: [0, 360] }
+                        }
+                        transition={animationsPaused
+                            ? { duration: 0.8, ease: "backOut" }
+                            : { duration: 20, repeat: Infinity, ease: "linear" }
+                        }
+                    >
+                        <img 
+                            src="/img/logobdt.svg" 
+                            alt="Logo BDT Front" 
+                            style={{ 
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                backfaceVisibility: 'hidden',
+                                WebkitBackfaceVisibility: 'hidden' // Soporte para Safari/iOS
+                            }} 
+                        />
+
+                        <img 
+                            src="/img/logobdt.svg" 
+                            alt="Logo BDT Back" 
+                            style={{ 
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                backfaceVisibility: 'hidden',
+                                WebkitBackfaceVisibility: 'hidden', // Soporte para Safari/iOS
+                                transform: 'rotateY(180deg)' // La giramos para que NO se vea en espejo
+                            }} 
+                        />
+                    </motion.div>
+                    
+                    <motion.h2 
+                        className="hero-title"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                    >
+                        Gestión de <br/>
+                        <span className="highlight-text">Seguros</span>
+                    </motion.h2>
+                    
+                    <motion.p 
+                        className="hero-desc"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                    >
+                        Detectá las mejores oportunidades. Ahora conectá y transforma con nuestro sello de innovación Soulware.
+                    </motion.p>
+                </motion.div>
+
+                {/* Boton de Tema (Modo Oscuro/Claro) */}
+                <motion.button
+                    className="animation-toggle-btn"
+                    style={{ right: '90px' }} 
+                    onClick={() => setDarkMode(!darkMode)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.9 }} // Un poco antes que el de pausa
+                >
+                    {darkMode ? <FaSun /> : <FaMoon />}
+                </motion.button>
+
+                {/* Boton de pausa */}
+                <motion.button
+                    className="animation-toggle-btn"
+                    onClick={() => setAnimationsPaused(!animationsPaused)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                >
+                    {animationsPaused ? <FaPlay /> : <FaPause />}
+                </motion.button>
             </div>
         </div>
     );
