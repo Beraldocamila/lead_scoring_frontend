@@ -6,6 +6,7 @@ import ModalCorreo from '../../components/ModalCorreo/ModalCorreo'
 import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo'
 import Header from '../../components/Header/Header'
 import NotificationToast from '../../components/NotificationToast/NotificationToast';
+import BackButton from '../../components/BackButton/BackButton';
 
 import useClients from "../../hooks/useClients";
 import useMails from "../../hooks/useMails";
@@ -349,10 +350,7 @@ const DetalleCliente = () => {
       </div>
 
       {/* Botón volver */}
-      <div className="fixed-return-button" onClick={() => navigate('/clientes')}>
-        <FaArrowLeft className="return-icon" />
-        <span className="return-text-hover">Volver a inicio</span>
-      </div>
+      <BackButton fallback="/clientes" />
 
       {/* MODAL */}
       <ModalCorreo

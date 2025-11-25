@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import NotificationToast from '../../components/NotificationToast/NotificationToast';
 import ModalProductos from '../../components/ModalProductos/ModalProductos';
+import BackButton from '../../components/BackButton/BackButton';
 import './productos.css';
 
 import useProducts from '../../hooks/useProducts';
@@ -333,10 +334,7 @@ const Productos = () => {
                 )}
             </main>
 
-            <div className="fixed-return-button" onClick={() => navigate('/clientes')}>
-                <FaArrowLeft className="return-icon" />
-                <span className="return-text-hover">Volver a inicio</span>
-            </div>
+            <BackButton fallback="/clientes" />
 
             {/* Modal de productos*/}
             <ModalProductos
