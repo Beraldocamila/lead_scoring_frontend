@@ -1,6 +1,7 @@
 import "./CorreosEnviados.css";
 import { useState, useEffect } from "react";
 import Header from '../../components/Header/Header'
+import BackButton from "../../components/BackButton/BackButton";
 import useAuth from "../../hooks/useAuth";
 import useMails from "../../hooks/useMails";
 import useProducts from "../../hooks/useProducts";
@@ -129,7 +130,7 @@ const CorreosEnviados = () => {
               }}
             />
           </div>
-          
+
           {/* Filtro Poliza, Fecha y Checkbox mios*/}
           <div className="filtros-secundarios">
             <div className="filtro-item">
@@ -241,6 +242,8 @@ const CorreosEnviados = () => {
             </button>
           </div>
         </div>
+
+        <BackButton fallback="/clientes" />
 
       </main>
 
