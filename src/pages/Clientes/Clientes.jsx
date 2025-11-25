@@ -2,6 +2,7 @@ import "./Clientes.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { FiSearch } from 'react-icons/fi';
 import Header from '../../components/Header/Header'
 import LoadingSpinner from "../../components/Spinner/Spinner";
 import useClients from "../../hooks/useClients";
@@ -22,7 +23,7 @@ const Clientes = () => {
     getClients();
     getProducts();
   }, []);
-  
+
   // SPINNER MIENTRAS CARGA
   if (loadingClients) return <LoadingSpinner text="Cargando clientes." />;
   if (clientError) return <p>{clientError}</p>;
@@ -61,12 +62,14 @@ const Clientes = () => {
 
       {/* MAIN CONTENT */}
       <main className="clientes-main">
+
         {/* FILTROS */}
-        <div className="filtros">
-          <div className="wrapper-busqueda">
+        <div className="toolbar-container">
+          <div className="search-wrapper">
+            <FiSearch className="search-icon" />
             <input
               type="text"
-              className="busqueda"
+              className="search-input"
               placeholder="Buscar por DNI o nombre..."
               value={filtro}
               onChange={(e) => {
@@ -76,27 +79,30 @@ const Clientes = () => {
             />
           </div>
 
-          <div className="wrapper-ordenar">
+          {/* Ordenar y Filtrar */}
+          <div className="filter-order-wrapper">
+
+            {/* Selector de Ordenar */}
             <select
-              className="ordenar"
+              className="filter-select"
               value={orden}
               onChange={(e) => setOrden(e.target.value)}
             >
-              <option value="Nombre">Ordenar por: Nombre</option>
-              <option value="DNI">Ordenar por: DNI</option>
+              <option value="Nombre">Nombre ( A - Z )</option>
+              <option value="DNI">DNI ( Menor a Mayor )</option>
             </select>
-          </div>
 
-          <div className="wrapper-filtrar">
+
+            {/* Selector de Filtrar */}
             <select
-              className="filtrar"
+              className="filter-select"
               value={filtroProducto}
               onChange={(e) => {
                 setFiltroProducto(e.target.value);
                 setPaginaActual(1);
               }}
             >
-              <option value="">Filtrar por: Producto</option>
+              <option value="">Todos los Tipos</option>
               {uniqueProducts.map((p, i) => (
                 <option key={i} value={p}>{p}</option>
               ))}

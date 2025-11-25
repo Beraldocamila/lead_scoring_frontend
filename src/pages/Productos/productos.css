@@ -63,9 +63,9 @@
     box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
 }
 
-.filters-wrapper {
+.filter-date-button-wrapper {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     flex-wrap: wrap;
 }
 

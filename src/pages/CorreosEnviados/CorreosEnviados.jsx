@@ -9,6 +9,7 @@ import ModalVistaCorreo from '../../components/ModalVistaCorreo/ModalVistaCorreo
 // SPINNER
 import LoadingSpinner from '../../components/Spinner/Spinner';
 import { FaRegEye } from "react-icons/fa";
+import { FiSearch } from 'react-icons/fi';
 
 //Libreria Fecha y Estilos
 import DatePicker from "react-datepicker";
@@ -20,8 +21,7 @@ const CorreosEnviados = () => {
   const { products } = useProducts();
 
   const [mostrarMios, setMostrarMios] = useState(false); // para mostrar mis correos enviados
-  const [filtroDni, setFiltroDni] = useState("");
-  const [filtroMail, setFiltroMail] = useState("");
+  const [filtro, setFiltro] = useState("");
   const [filtroPoliza, setFiltroPoliza] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
   const [filtroFechaDate, setFiltroFechaDate] = useState(null);
@@ -36,7 +36,7 @@ const CorreosEnviados = () => {
   //Trae todos los mails
 
   useEffect(() => {
-    getMailsContext(); 
+    getMailsContext();
   }, []);
 
   if (loadingMails) return <LoadingSpinner text="Cargando correos..." />;
@@ -75,8 +75,10 @@ const CorreosEnviados = () => {
 
   // Filtrado
   const mailsFiltrados = mails.filter((m) =>
-    (filtroDni === "" || (m.dni && m.dni.toString().includes(filtroDni))) &&
-    (filtroMail === "" || (m.mail && m.mail.toLowerCase().includes(filtroMail.toLowerCase()))) &&
+    (!filtro ||
+      (m.dni && m.dni.toString().includes(filtro)) ||
+      (m.mail && m.mail.toLowerCase().includes(filtro.toLowerCase()))
+    ) &&
     (filtroPoliza === "" ||
       (() => {
         const prod = products.find(p => p.id_producto === m.id_producto);
@@ -110,61 +112,60 @@ const CorreosEnviados = () => {
 
       {/* MAIN */}
       <main className="correos-main">
-        <div className="filtros">
-          <input
-            type="text"
-            className="busqueda"
-            placeholder="Buscar por DNI..."
-            value={filtroDni}
-            onChange={(e) => {
-              setFiltroDni(e.target.value);
-              setPaginaActual(1);
-            }}
-          />
-          <input
-            type="text"
-            className="busqueda"
-            placeholder="Buscar por Mail..."
-            value={filtroMail}
-            onChange={(e) => {
-              setFiltroMail(e.target.value);
-              setPaginaActual(1);
-            }}
-          />
-          <div className="datepicker-wrapper">
-            <DatePicker
-              selected={filtroFechaDate} // La fecha seleccionada (objeto Date)
-              onChange={handleFechaChange} // la funcion que definimos
-              dateFormat="dd/MM/yyyy" // Formato de visualización
-              placeholderText="dd/mm/aaaa" // Texto por defecto
-              className="busqueda datepicker-input"
-              isClearable // Permite borrar la selección
+
+        {/* FILTRO */}
+        <div className="toolbar-container">
+          {/* Busqueda */}
+          <div className="search-wrapper">
+            <FiSearch className="search-icon" />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Buscar por DNI, Mail, o contenido..."
+              value={filtro}
+              onChange={(e) => {
+                setFiltro(e.target.value);
+                setPaginaActual(1);
+              }}
             />
           </div>
-          <select
-            className="filtrar"
-            value={filtroPoliza}
-            onChange={(e) => {
-              setFiltroPoliza(e.target.value);
-              setPaginaActual(1);
-            }}
-          >
-            <option value="">Filtrar por: Póliza</option>
-            {uniqueProducts.map((p, i) => (
-              <option key={i} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
+          
+          {/* Filtro Poliza, Fecha y Checkbox mios*/}
+          <div className="filtros-secundarios">
+            <div className="filtro-item">
+              <DatePicker
+                selected={filtroFechaDate}
+                onChange={handleFechaChange}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Fecha (dd/mm/aaaa)"
+                className="datepicker-input"
+                isClearable
+              />
+            </div>
 
-          <label className="mostrar-mios">
-            <input
-              type="checkbox"
-              checked={mostrarMios}
-              onChange={(e) => setMostrarMios(e.target.checked)}
-            />
-            Mostrar Mis Correos
-          </label>
+            <div className="filtro-item">
+              <select
+                className="filter-select"
+                value={filtroPoliza}
+                onChange={(e) => setFiltroPoliza(e.target.value)}
+              >
+                <option value="">Todos los Tipos</option>
+                {uniqueProducts.map((p, i) => (
+                  <option key={i} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+
+            <label className="filtro-item checkbox-mios">
+              <input
+                type="checkbox"
+                checked={mostrarMios}
+                onChange={(e) => setMostrarMios(e.target.checked)}
+              />
+              Mostrar Mis Correos
+            </label>
+          </div>
+
         </div>
 
         {/* TABLA */}
