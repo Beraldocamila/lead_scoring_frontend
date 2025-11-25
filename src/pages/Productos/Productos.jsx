@@ -209,7 +209,7 @@ const Productos = () => {
                         />
                     </div>
 
-                    <div className="filters-wrapper">
+                    <div className="filter-date-button-wrapper">
                         <select
                             value={filterType}
                             onChange={(e) => setFilterType(e.target.value)}

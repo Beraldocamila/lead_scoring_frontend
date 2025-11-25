@@ -12,72 +12,102 @@
 .correos-main {
     padding: 32px;
     flex: 1;
+    margin: 0px 80px;
 }
 
 /* FILTROS */
-.filtros {
+.toolbar-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 28px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 20px;
+    margin-bottom: 25px;
+
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    border: 1px solid var(--color-borders);
 }
 
-.busqueda,
-.filtrar {
-    padding: 10px 14px;
+/* Search Wrapper */
+.search-wrapper {
+    position: relative;
+    flex: 2;
+    min-width: 450px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gray-text);
+    font-size: 1.2rem;
+}
+
+/* Input de busqueda general */
+.search-input {
+    width: 100%;
+    padding: 10px 12px 10px 45px;
     border: 1px solid var(--color-borders);
+    background-color: var(--bg-input);
+    color: var(--texto-principal);
     border-radius: 8px;
     font-size: 14px;
-    background: var(--color-light-bg);
-    color: var(--texto-principal);
     outline: none;
-    transition: border .2s ease;
+    transition: all 0.2s;
 }
 
-.busqueda {
-    flex: 1;
-
+/* Contenedor de filtros y checkbox*/
+.filtros-secundarios {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
 }
 
-.filtrar {
-    flex: 1;
-
+/* Filtros Item */
+.filtro-item {
+    display: flex;
+    align-items: center;
 }
 
-.busqueda:focus,
-.filtrar:focus,
-.datepicker-wrapper input:focus {
-    border-color: var(--primary-blue);
-}
 
-.datepicker-wrapper {
-    flex: 1;
-    box-sizing: border-box;
-
-}
-
-.react-datepicker-wrapper {
-    width: 100%;
-}
-
-/* Estilo del input del DatePicker */
-.datepicker-wrapper .datepicker-input {
-    width: 100%;
-    padding: 10px 14px;
+/* Inputs de filtros */
+.filter-select,
+.datepicker-input {
+    padding: 10px 12px;
     border: 1px solid var(--color-borders);
     border-radius: 8px;
-    font-size: 14px;
-    background: var(--color-light-bg);
+    background-color: var(--bg-input);
     color: var(--texto-principal);
+    font-size: 14px;
+    cursor: pointer;
+    height: 40px;
     box-sizing: border-box;
 }
+.datepicker-input::placeholder {
+    color: var(--texto-principal);
+    opacity: 1;
+}
 
-/* Estilo del contenedor principal (para sombra, si quieres) */
+
+/* Focus */
+.search-input:focus,
+.filter-select:focus,
+.datepicker-input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+}
+
+/* Datepicker popper */
 .react-datepicker-popper {
     box-shadow: var(--sombra-card);
 }
 
-/* Estilo de los días seleccionados */
+/* Días seleccionados */
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
     background-color: var(--primary-blue) !important;
@@ -85,39 +115,39 @@
     border-radius: 4px !important;
 }
 
-/* Estilo de hover en días */
+/* Hover */
 .react-datepicker__day:hover {
     background-color: #dcd8ff !important;
     border-radius: 4px !important;
 }
 
-/* Estilo para el label del checkbox */
-.mostrar-mios {
+/* Checkbox "Mostrar Mis Correos" */
+.checkbox-mios {
     display: flex;
-    flex: 1;
     align-items: center;
+    gap: 8px;
     font-weight: 500;
     color: var(--primary-blue);
-    /* primary-blue */
     cursor: pointer;
-    margin-left: 10px;
+    height: 40px;
 }
 
-/* Estilo para el checkbox en sí */
-.mostrar-mios input[type="checkbox"] {
-    margin-right: 8px;
+.checkbox-mios input[type="checkbox"] {
     accent-color: var(--primary-blue);
     cursor: pointer;
 }
 
-/*     TABLA  */
+
+/* TABLA */
 .tabla-container {
-    background: var(--app-fondo);
     border-radius: 12px;
     box-shadow: var(--sombra-card);
     overflow: hidden;
 }
 
+.correos-tabla tr {
+    background-color: var(--bg-card);
+} 
 .correos-tabla {
     width: 100%;
     border-collapse: collapse;
@@ -136,10 +166,10 @@
 
 /* Encabezados */
 .correos-tabla th {
-    background-color: var(--color-light-bg);
+    background-color: var(--bg-card);
     color: var(--primary-blue);
     text-transform: uppercase;
-    font-size: 13px;
+    font-size: 20px;
     font-weight: 600;
 }
 
